@@ -7,7 +7,7 @@ function NavLink(props: React.HTMLProps<HTMLAnchorElement>) {
   const router = useRouter()
   const { href, style, ...deferred } = props
 
-  const isActive = router.pathname === href
+  const isActive = router.pathname.startsWith(href)
 
   return (
     <Link href={href}>
