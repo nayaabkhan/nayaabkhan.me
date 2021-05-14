@@ -1,0 +1,735 @@
+---
+title: React for absolute beginners
+date: April 2, 2016
+hashtags: [reactjs, javascript]
+---
+
+React JS is a powerful yet simple library. But when I talk to the guys just
+getting started with React, I often get a feeling that they have a lot of
+misconceptions and confusions about it. I don't blame them– React brings many
+radical new ideas with it.
+
+Virtual DOM, JSX, One-way data flow all seem to be either too complicated, alien
+or counter-intuitive initially. But that's mostly subject to the way you begin
+learning React.
+
+I feel that learning it the right way, learning its concepts in the correct
+order, is the key here. You would appreciate why it needs a Virtual DOM, what is
+does with it, and why DOM diffing is needed once you understand how it works.
+
+In this article, we will try to understand the React way of doing things
+starting with bare basics. And building up to the point where we can appreciate
+why React does what it does.
+
+## React is just a view library
+
+Never ever forget that it is just a view library. It is _only_ the "V" in the
+"MVC". Treat it like that. You create UI elements with it and they are called
+components.
+
+Let us take a basic example of how a component would look like. Say a Logo
+component.
+
+```jsx
+<div>
+  <img src="/images/logo.svg" alt="My Logo" />
+</div>
+```
+
+You'd say, "Hey! That's just HTML". Yep, that's how our logo markup would look
+if I were to write it in HTML. Now let's make it a React component.
+
+```jsx
+function Logo() {
+  return (
+    <div>
+      <img src="/images/logo.svg" alt="My Logo" />
+    </div>
+  )
+}
+```
+
+There you have it, your first React component. Now there are a few constructs worth explaining here:
+
+1. You use `createClass` to create components (there are a few other ways like
+   pure functions and ES6 classes). It takes an object.
+2. `render` is the most important method and the one you will use always. It
+   should return the markup for your component.
+3. What's the HTML doing in JavaScript? Remember that it is _not_ HTML, it is
+   JSX. It just looks like HTML. It is usually converted into simple JavaScript
+   calls by something like Babel. You could write the above in simple JavaScript,
+   but JSX is cleaner and recommended.
+
+This is how it would look in JavaScript:
+
+```js
+function Logo() {
+  return React.createElement(
+    'div',
+    null,
+    React.createElement('img', {
+      src: '/images/logo.svg',
+      alt: 'My Logo',
+    })
+  )
+}
+```
+
+Not too shabby isn't it. I am sure you can see the correlation. I recommend
+beginners to try writing a few components without JSX. That way, you would
+really appreciate how much JSX does for you and even write better JSX as a
+result.
+
+## How to use components
+
+So we our component, how do we use it on a page. Okay let's do it.
+
+Let's setup a testing page. I would never recommend using it in production, but
+it serves well as a playground to quickly jot down components. This is the
+`index.html`.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React Playground</title>
+  </head>
+  <body>
+    <!-- application container -->
+    <div id="root"></div>
+
+    <script
+      src="https://unpkg.com/react@17/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+```
+
+So we include the necessary React libraries and an `app.js`. That's where we put
+our JavaScript and components. So create it as well. The `browser.js` from
+`babel-core` is used to support JSX syntax at runtime in the browser. Again, I
+recommend not to use it on production apps _ever_.
+
+One important piece of the HTML is the `div` with ID `root`. We will use this
+element to plug in our component. Sure, we could have used `body` itself, but
+never do that in practice. What if some other script or a browser extension
+tries to append to your body? That will surely screw up your application.
+
+Now let's focus on the `app.js`. Here is how it looks:
+
+```jsx
+function Logo() {
+  return (
+    <div>
+      <img
+        src="https://facebook.github.io/react/img/logo.svg"
+        alt="React Logo"
+      />
+    </div>
+  )
+}
+
+ReactDOM.render(<Logo />, document.getElementById('root'))
+```
+
+You're already familiar with the first half of the code. But the second half is
+what's going to make our Logo component show up on the page. So, save this file
+and load up the page in your browser. You should be greeted with the React logo
+in all its glory. A job well done compadre. Let's move on.
+
+## Props: Making customisable components
+
+Okay, so our logo is visible and looks good. How about making it possible to
+specify a size for it? We do it using `props`. We can pass props to a React
+component and alter its markup based on the values of those props.
+
+Let's add two attributes to our Logo component, `width` and `height` with
+obvious purposes.
+
+```jsx {7-8}
+function Logo(props) {
+  return (
+    <div>
+      <img
+        src="https://facebook.github.io/react/img/logo.svg"
+        alt="React Logo"
+        width={props.width}
+        height={props.height}
+      />
+    </div>
+  )
+}
+
+ReactDOM.render(
+  <Logo width={100} height={100} />,
+  document.getElementById('root')
+)
+```
+
+Pretty simple eh? Some new concepts here:
+
+1. You can access props using `this.props.propName`.
+2. `{}` are necessary if you are passing something other than a string to
+   attributes/props.
+
+Now we have made our Logo component customizable. Cool.
+
+## But what about dynamic components?
+
+You must be thinking the same, isn't it? Worry not, we'll talk about the most
+important class of components now– components that change over time.
+
+But before we see an example, we must understand one important design choice
+made by the React engineers. In React, the data flow is one-way, i.e. from
+parent to child using `props`. There is no two-way data binding. Trust me, this
+makes components:
+
+- much more predictable
+- easier to reason about
+- easier to debug
+- performant
+
+Okay so with that fact out of the way, we can now see an example. A rule of
+thumb, if the component you want to develop has data that changes over time–
+e.g. a clock component, or a tab component, then you could use `state` to model
+those changes in React components. Let's see with an example.
+
+```jsx
+function Stepper(props) {
+  const [value, setValue] = React.useState(0)
+
+  return (
+    <div>
+      <button onClick={() => setValue(value + 1)}>+</button>
+      <span>{value}</span>
+      <button onClick={() => setValue(value - 1)}>-</button>
+    </div>
+  )
+}
+
+ReactDOM.render(<Stepper />, document.getElementById('root'))
+```
+
+A lot of new constructs here. Nothing too complicated going on, though. We have
+written a simple stepper component with two buttons– one to increment and
+another to decrement a value. Now here, the value is what changes over time, so
+that's our state. Now let's understand the new constructs:
+
+1. `getInitialState` is used to provide an initial state to the component. In
+   our case, the initial value. We have set it to `0`.
+2. `onClick` is used to provide a method to handle the click event.
+3. `setState` is used to update the state. You cannot assign to
+   `this.state.currentValue`. That wouldn't update our component. Always call
+   `setState` to change the state. Consider `this.state.anyThing` to be just
+   read-only.
+
+Now you know how to write dynamic components. We didn't need any two-way binding
+to make it work. We did it with more explicit code. And we can easily tell how
+and when the state changes, just look for the `setState()` calls!
+
+## So why Virtual DOM and Diffing?
+
+Okay, so the moment of truth. You might want to think about what happens exactly
+when you change state using `setState`. You say that the counter increments or
+decrements. Well in reality, React changes the state and re-renders the whole
+component! Yes, it just goes about re-rendering it without doing anything else.
+
+Wouldn't that be dumb and really non-performant? Yes, it would be, but in
+reailty no it isn't. The answer is Virtual DOM. Virtual DOM is an equivalent
+represenation of the DOM subtree rendered in the browser. Virtual DOM is just a
+JavaScript object. Whenever the props or state of a component changes, React
+rebuilds the virtual DOM and compares it to the old one. If they are not the
+same it calculates a minimal number of DOM operations required to make old one
+same as the new one.
+
+Doing all of this on actual DOM would be slow as hell. But JavaScript is fast.
+This Virtual representation helps React build and diff the virtual DOMs quickly.
+You see now? Virtual DOM is just a side effect, an implementation requirement so
+as to accumulate for the design choice of simply re-rendering components when
+props or state changes. And performance is just a result of using Virtual DOM
+and diffing.
+
+<svg
+  id="prefix__Layer_1"
+  xmlns="http://www.w3.org/2000/svg"
+  x={0}
+  y={0}
+  viewBox="0 0 708 346"
+  xmlSpace="preserve"
+  {...props}
+>
+  <style>
+    {
+      '.prefix__st0{fill:hsl(var(--palette-primary-50))}.prefix__st1{fill:hsl(var(--palette-primary-30))}.prefix__st2{enable-background:new}.prefix__st3{fill:#fff}.prefix__st4{fill:hsl(var(--palette-primary-50))}.prefix__st5{fill:#fff}'
+    }
+  </style>
+  <circle
+    pointerEvents="none"
+    className="prefix__st0"
+    cx={137.5}
+    cy={29.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M137.5 57.8c-15.6 0-28.3-12.7-28.3-28.3s12.7-28.3 28.3-28.3 28.3 12.7 28.3 28.3-12.7 28.3-28.3 28.3zm0-55.6c-15 0-27.3 12.2-27.3 27.3s12.2 27.3 27.3 27.3 27.3-12.2 27.3-27.3-12.3-27.3-27.3-27.3z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M5.7 10.5v-.8c-.2.3-.5.5-.8.7s-.7.2-1.1.2c-.4 0-.8-.1-1.2-.3s-.8-.3-1-.6-.4-.6-.6-1C.9 8.3.8 7.9.8 7.5s.1-.8.2-1.2.3-.7.6-1 .5-.5.9-.7c.3-.2.7-.3 1.2-.3.4 0 .8.1 1.1.3.3.2.5.4.7.6V1.4h2v9.1H5.7zm-.1-3c0-.2 0-.4-.1-.6-.1-.1-.2-.3-.3-.5-.1-.1-.3-.2-.4-.3-.2-.1-.4-.1-.6-.1-.3 0-.5 0-.7.1-.1.1-.3.2-.4.3-.1.2-.2.3-.3.5 0 .2-.1.4-.1.6 0 .2 0 .4.1.6.1.1.2.3.3.5.1.1.3.3.4.3.2.1.4.1.7.1.2 0 .4 0 .6-.1s.3-.2.5-.3c.1-.1.2-.3.3-.5v-.6zm5.6-4.9c0 .2 0 .3-.1.4s-.1.2-.2.3c-.1.1-.2.2-.4.2-.1.1-.3.1-.4.1-.3 0-.6-.1-.8-.3-.3-.1-.4-.4-.4-.7 0-.1 0-.3.1-.4s.1-.2.2-.3c.1-.1.2-.2.4-.2.1-.1.3-.2.4-.2.2 0 .3 0 .4.1s.3.1.4.2c.1.1.2.2.2.3.1.2.2.4.2.5zm-2.1 7.9v-6h2v6h-2zm7.2 0h-2.1l-2.4-6H14l1.3 3.9 1.3-3.9h2.1l-2.4 6z"
+      transform="translate(127.5 22.5)"
+    />
+  </g>
+  <circle
+    pointerEvents="none"
+    className="prefix__st0"
+    cx={29.5}
+    cy={125.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M29.5 153.8c-15.6 0-28.3-12.7-28.3-28.3s12.7-28.3 28.3-28.3 28.3 12.7 28.3 28.3-12.7 28.3-28.3 28.3zm0-55.6c-15 0-27.3 12.2-27.3 27.3s12.2 27.3 27.3 27.3 27.3-12.2 27.3-27.3-12.3-27.3-27.3-27.3z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M7.5 7.5c0 .4-.1.8-.2 1.2-.1.4-.3.7-.6 1-.2.3-.5.5-.9.7-.4.2-.8.3-1.2.3-.4 0-.8-.1-1.1-.2-.4-.2-.6-.5-.8-.8v.8H.8V1.4h2v3.7c.2-.1.4-.3.7-.5.3-.2.7-.3 1.1-.3.4 0 .8.1 1.2.3.4.2.7.4.9.7s.4.6.6 1 .2.8.2 1.2zm-1.9 0c0-.2 0-.4-.1-.6-.1-.2-.2-.3-.3-.5-.1-.1-.2-.2-.4-.3-.2-.1-.4-.1-.6-.1-.3 0-.5 0-.6.1-.2.1-.4.2-.5.3-.1.2-.2.4-.3.5 0 .2-.1.4-.1.6s0 .4.1.6c.1.1.2.3.3.5.1.1.3.3.5.3.1.1.3.1.6.1.2 0 .4 0 .6-.1.2-.1.3-.2.4-.3.1-.1.2-.3.3-.5.1-.2.1-.4.1-.6zm7.1 3v-.8c-.1.1-.2.3-.3.4-.1.1-.3.2-.4.3-.2.1-.3.2-.5.2s-.4.1-.6.1c-.4 0-.7-.1-1-.2-.3-.1-.5-.3-.7-.6-.2-.2-.3-.5-.4-.8-.1-.3-.1-.6-.1-.9V4.5h2v3.7c0 .2.1.3.1.4s.2.2.3.3c.1.1.3.1.4.1.3 0 .6-.1.8-.4.2-.3.3-.6.3-.9V4.5h2v6h-1.9zM18.2 6v2.3c0 .3.1.5.2.6s.3.2.6.2h.3c.1 0 .2 0 .3-.1v1.4c-.1 0-.3.1-.5.1s-.4.1-.6.1c-.4 0-.7 0-1-.2-.3-.1-.5-.2-.7-.4s-.3-.4-.4-.7c-.1-.3-.1-.6-.1-.9V6h-1V4.5h.9V3h1.9v1.6h1.4V6h-1.3z"
+      transform="translate(9.5 118.5)"
+    />
+    <path
+      className="prefix__st3"
+      d="M22.4 6v2.3c0 .3.1.5.2.6s.3.2.6.2h.3c.1 0 .2 0 .3-.1v1.4c-.1 0-.3.1-.5.1s-.4.1-.6.1c-.4 0-.7 0-1-.2-.3-.1-.5-.2-.7-.4s-.3-.4-.4-.7c-.1-.3-.1-.6-.1-.9V6h-1V4.5h.9V3h1.9v1.6h1.4V6h-1.3zm8.7 1.5c0 .5-.1.9-.3 1.3-.2.4-.4.7-.7 1-.3.3-.7.5-1.1.6-.4.2-.8.2-1.3.2-.4 0-.9-.1-1.3-.2-.4-.2-.8-.4-1.1-.6-.3-.3-.5-.6-.7-1-.2-.4-.3-.8-.3-1.3s.1-.9.3-1.3c.2-.4.4-.7.7-1 .3-.3.7-.5 1.1-.6.4-.1.8-.2 1.3-.2s.9.1 1.3.2.8.4 1.1.6c.3.3.5.6.7 1 .2.4.3.8.3 1.3zm-1.9 0c0-.2 0-.4-.1-.6-.1-.2-.2-.3-.3-.5-.1-.1-.3-.3-.4-.3-.2-.1-.4-.1-.6-.1-.2 0-.4 0-.6.1-.2.1-.3.2-.4.3-.1.1-.2.3-.3.5-.1.2-.1.4-.1.6 0 .2 0 .4.1.6.1.2.2.4.3.5l.4.4c.1.1.3 0 .6 0s.4 0 .6-.1c.2-.1.3-.2.4-.4.1-.1.2-.3.3-.5 0-.1.1-.3.1-.5zm7 3V6.7c0-.2-.1-.3-.1-.4l-.3-.3h-.4c-.1 0-.4 0-.5.1l-.3.3c-.1.1-.2.3-.2.4 0 .2-.1.3-.1.5v3.2h-2v-6h1.9v.8c.1-.1.2-.3.3-.4.1-.1.3-.2.4-.3.2-.1.3-.2.5-.2.2-.1.4-.1.6-.1.4 0 .7.1 1 .2.3.1.5.3.7.6.2.2.3.5.4.8s.1.6.1.9v3.7h-2z"
+      transform="translate(9.5 118.5)"
+    />
+  </g>
+  <path
+    transform="rotate(-41.911 85.545 75.324)"
+    className="prefix__st4"
+    d="M44.1 74.8H127v1H44.1z"
+  />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M50.8 106.5l2.9-7.3 1 3.8 3.6 1.4-7.5 2.1z"
+  />
+  <path
+    className="prefix__st4"
+    d="M50 107.2l3.8-9.6 1.4 5 4.8 1.9-10 2.7zm3.6-6.4l-2 5 5.1-1.4-2.5-1-.6-2.6z"
+  />
+  <circle
+    pointerEvents="none"
+    className="prefix__st5"
+    cx={29.5}
+    cy={261.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M29.8 289.8v-1c1 0 2-.1 2.9-.2l.1 1c-1 .1-2 .1-3 .2zm-3.1-.2c-1-.1-2-.3-3-.5l.2-1c1 .2 1.9.3 2.9.4l-.1 1.1zm9.1-.6l-.2-1c1-.2 1.9-.5 2.8-.8l.3.9c-.9.4-1.9.7-2.9.9zm-15-.6c-1-.3-1.9-.7-2.8-1.1l.4-.9c.9.4 1.8.8 2.7 1.1l-.3.9zm20.8-1.3l-.4-.9c.9-.4 1.8-.9 2.6-1.4l.5.9c-.9.4-1.8.9-2.7 1.4zm-26.4-1.2c-.9-.5-1.7-1.1-2.5-1.7l.6-.8c.8.6 1.6 1.1 2.5 1.6l-.6.9zm31.6-2l-.6-.8c.8-.6 1.5-1.2 2.2-1.9l.7.7c-.7.7-1.5 1.3-2.3 2zm-36.5-1.7c-.7-.7-1.5-1.4-2.1-2.2l.8-.7c.6.7 1.3 1.4 2.1 2.1l-.8.8zm40.9-2.6l-.8-.6c.6-.8 1.2-1.5 1.8-2.4l.8.6c-.5.8-1.2 1.7-1.8 2.4zm-44.9-1.9c-.6-.8-1.1-1.7-1.6-2.6l.9-.5c.5.9 1 1.7 1.6 2.5l-.9.6zm48.3-3.1l-.9-.5c.5-.9.9-1.8 1.2-2.7l.9.4c-.3 1-.8 1.9-1.2 2.8zm-51.2-2.3c-.4-.9-.7-1.9-1-2.9l1-.3c.3.9.6 1.9 1 2.8l-1 .4zm53.4-3.4l-1-.3c.3-.9.5-1.9.6-2.9l1 .2c-.1 1-.3 2-.6 3zm-55.1-2.4c-.2-1-.3-2-.4-3l1-.1c.1 1 .2 2 .4 2.9l-1 .2zm56.1-3.6h-1V260l1-.1v3zm-55.6-2.5h-1c0-1 .1-2 .3-3l1 .1c-.1 1-.2 1.9-.3 2.9zm54.2-3.4c-.2-1-.4-1.9-.6-2.9l1-.3c.3 1 .5 2 .7 3l-1.1.2zm-53.3-2.4l-1-.3c.3-1 .6-2 .9-2.9l.9.4c-.3.9-.6 1.9-.8 2.8zm51.7-3.3l-1.2-2.7.9-.5c.5.9.9 1.8 1.3 2.8l-1 .4zm-49.6-2.2l-.9-.5c.5-.9 1-1.8 1.5-2.6l.8.5c-.5.9-1 1.7-1.4 2.6zm46.8-3c-.6-.8-1.2-1.6-1.8-2.3l.8-.7c.7.8 1.3 1.6 1.9 2.4l-.9.6zm-43.6-1.9l-.8-.6c.6-.8 1.3-1.5 2.1-2.2l.7.7c-.7.6-1.4 1.3-2 2.1zm39.8-2.5c-.7-.7-1.5-1.3-2.2-1.9l.6-.8c.8.6 1.6 1.3 2.3 2l-.7.7zm-35.6-1.6l-.6-.8c.8-.6 1.6-1.2 2.5-1.8l.5.8-2.4 1.8zm30.9-2c-.8-.5-1.7-1-2.6-1.4l.4-.9c.9.4 1.8.9 2.7 1.4l-.5.9zM17.6 237l-.4-.9c.9-.4 1.9-.8 2.8-1.2l.3.9c-.9.4-1.8.7-2.7 1.2zm20.6-1.3c-.9-.3-1.9-.6-2.8-.8l.2-1c1 .2 2 .5 2.9.8l-.3 1zm-15.1-.7l-.2-1c1-.2 2-.4 3-.5l.1 1c-.9.1-1.9.3-2.9.5zm9.3-.6c-1-.1-2-.2-3-.2H29v-1h.6c1 0 2 .1 3 .2l-.2 1z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M4.9 8.5h2.7v.7H4.9v2.7h-.8V9.2H1.4v-.7h2.7V5.8h.7v2.7z"
+      transform="translate(24.5 254.5)"
+    />
+  </g>
+  <path className="prefix__st4" d="M28.8 153.5h1v74.1h-1z" />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M29.3 232.9l-3.5-7 3.5 1.8 3.5-1.8-3.5 7z"
+  />
+  <path
+    className="prefix__st4"
+    d="M29.3 234l-4.6-9.2 4.6 2.3 4.6-2.3-4.6 9.2zm-2.4-7l2.4 4.8 2.4-4.8-2.4 1.2-2.4-1.2z"
+  />
+  <circle
+    pointerEvents="none"
+    className="prefix__st0"
+    cx={137.5}
+    cy={125.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M137.5 153.8c-15.6 0-28.3-12.7-28.3-28.3s12.7-28.3 28.3-28.3 28.3 12.7 28.3 28.3-12.7 28.3-28.3 28.3zm0-55.6c-15 0-27.3 12.2-27.3 27.3s12.2 27.3 27.3 27.3 27.3-12.2 27.3-27.3-12.3-27.3-27.3-27.3z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M4.9 6.3c-.1-.2-.3-.3-.5-.4-.3-.1-.5-.2-.7-.2-.2 0-.4 0-.5.1-.2.1-.3.3-.3.4 0 .2.1.3.3.4.2.1.4.1.8.2.2 0 .5.1.7.2l.6.3c.2.1.3.3.4.5.1.2.2.5.2.7 0 .4-.1.7-.2 1-.2.3-.4.5-.6.6-.2.2-.5.3-.8.3s-.6.1-.9.1c-.5 0-1-.1-1.4-.2-.5-.2-.9-.4-1.2-.7l1.1-1.2c.1.4.4.6.6.7.3.1.5.2.8.2.2 0 .3 0 .5-.1S4 9 4 8.8s-.1-.3-.3-.4c-.1-.1-.4-.2-.8-.3-.3-.1-.5-.1-.7-.2-.2-.1-.4-.2-.5-.3-.2-.2-.3-.3-.4-.5-.1-.2-.2-.5-.2-.8 0-.4.1-.7.2-.9s.4-.4.6-.6c.2-.2.5-.3.8-.4.3 0 .6-.1.9-.1.4 0 .9.1 1.3.2.4.2.8.4 1.1.7L4.9 6.3zm8.8 1.2c0 .4-.1.8-.2 1.2-.1.4-.3.7-.6 1s-.5.5-.9.7-.8.3-1.2.3c-.4 0-.7-.1-1-.2-.3-.1-.6-.4-.8-.6v3.5H7V4.5h1.9v.7c.3-.2.5-.4.8-.6s.7-.3 1.1-.3c.4 0 .8.1 1.2.3s.7.4 1 .7.4.6.6 1c0 .4.1.8.1 1.2zm-1.9 0c0-.2 0-.4-.1-.6-.1-.2-.1-.3-.3-.5-.1-.1-.3-.3-.4-.3-.2-.1-.4-.1-.6-.1-.2 0-.4 0-.6.1-.2.1-.3.2-.4.3-.2.2-.3.4-.3.5-.1.2-.1.4-.1.6s0 .4.1.6c.1.2.2.3.3.5.1.1.3.3.4.3s.4.1.6.1c.2 0 .4 0 .6-.1.2-.1.3-.2.4-.3.1-.1.2-.3.3-.5.1-.2.1-.4.1-.6zm3.1-2.2c.4-.3.8-.6 1.2-.8.5-.2.9-.3 1.4-.3.5 0 .9.1 1.3.2.3.1.6.3.8.6.2.3.4.6.5 1 .1.4.2.9.2 1.4v3h-1.8v-.5c-.2.2-.4.4-.7.6-.3.1-.6.2-1 .2-.2 0-.5 0-.7-.1-.3-.1-.5-.2-.7-.3-.2-.1-.4-.3-.5-.6-.1-.2-.2-.5-.2-.9s.1-.8.4-1c.2-.3.5-.5.9-.6l1.2-.3c.5 0 .9-.1 1.3-.1v-.1c0-.3-.1-.5-.3-.7-.2-.1-.5-.2-.8-.2-.3 0-.5.1-.8.2-.3.1-.5.3-.7.4l-1-1.1zm3.6 2.6h-1c-.1 0-.3.1-.5.1-.2.1-.3.1-.4.2-.1.1-.2.2-.2.4 0 .1 0 .2.1.3l.2.2c.1 0 .2.1.3.1h.3c.4 0 .7-.1.9-.3s.3-.5.3-.9v-.1zm7.2 2.6V6.7c0-.2-.1-.3-.1-.4l-.3-.3h-.5c-.2 0-.3 0-.5.1s-.2.1-.3.3-.2.3-.2.4c0 .2-.1.3-.1.5v3.2h-2v-6h1.9v.8c.1-.1.2-.2.4-.3.1-.1.3-.2.4-.3.2-.1.3-.2.5-.2.2-.1.4-.1.6-.1.4 0 .7.1 1 .2.3.1.5.3.7.6.2.2.3.5.4.8s.1.6.1.9v3.7h-2z"
+      transform="translate(122.5 118.5)"
+    />
+  </g>
+  <path className="prefix__st4" d="M136.7 57h1v34.7h-1z" />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M137.2 96.9l-3.5-7 3.5 1.8 3.5-1.8-3.5 7z"
+  />
+  <path
+    className="prefix__st4"
+    d="M137.2 98l-4.6-9.2 4.6 2.3 4.6-2.3-4.6 9.2zm-2.4-7l2.4 4.8 2.4-4.8-2.4 1.2-2.4-1.2z"
+  />
+  <circle
+    pointerEvents="none"
+    className="prefix__st5"
+    cx={137.5}
+    cy={261.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M137.8 289.8v-1c1 0 2-.1 2.9-.2l.1 1c-1 .1-2 .1-3 .2zm-3.1-.2c-1-.1-2-.3-3-.5l.2-1c1 .2 1.9.3 2.9.4l-.1 1.1zm9.1-.6l-.2-1c1-.2 1.9-.5 2.8-.8l.3.9c-.9.4-1.9.7-2.9.9zm-15-.6c-1-.3-1.9-.7-2.8-1.1l.4-.9c.9.4 1.8.8 2.7 1.1l-.3.9zm20.8-1.3l-.4-.9c.9-.4 1.8-.9 2.6-1.4l.5.9c-.9.4-1.8.9-2.7 1.4zm-26.4-1.2c-.9-.5-1.7-1.1-2.5-1.7l.6-.8c.8.6 1.6 1.1 2.5 1.6l-.6.9zm31.6-2l-.6-.8c.8-.6 1.5-1.2 2.2-1.9l.7.7c-.7.7-1.5 1.3-2.3 2zm-36.5-1.7c-.7-.7-1.5-1.4-2.1-2.2l.8-.7c.6.7 1.3 1.4 2.1 2.1l-.8.8zm40.9-2.6l-.8-.6c.6-.8 1.2-1.5 1.8-2.4l.8.6c-.5.8-1.2 1.7-1.8 2.4zm-44.9-1.9c-.6-.8-1.1-1.7-1.6-2.6l.9-.5c.5.9 1 1.7 1.6 2.5l-.9.6zm48.3-3.1l-.9-.5c.5-.9.9-1.8 1.2-2.7l.9.4c-.3 1-.8 1.9-1.2 2.8zm-51.2-2.3c-.4-.9-.7-1.9-1-2.9l1-.3c.3.9.6 1.9 1 2.8l-1 .4zm53.4-3.4l-1-.3c.3-.9.5-1.9.6-2.9l1 .2c-.1 1-.3 2-.6 3zm-55.1-2.4c-.2-1-.3-2-.4-3l1-.1c.1 1 .2 2 .4 2.9l-1 .2zm56.1-3.6h-1V260l1-.1v3zm-55.6-2.5h-1c0-1 .1-2 .3-3l1 .1c-.1 1-.2 1.9-.3 2.9zm54.2-3.4c-.2-1-.4-1.9-.6-2.9l1-.3c.3 1 .5 2 .7 3l-1.1.2zm-53.3-2.4l-1-.3c.3-1 .6-2 .9-2.9l.9.4c-.3.9-.6 1.9-.8 2.8zm51.7-3.3l-1.2-2.7.9-.5c.5.9.9 1.8 1.3 2.8l-1 .4zm-49.6-2.2l-.9-.5c.5-.9 1-1.8 1.5-2.6l.8.5c-.5.9-1 1.7-1.4 2.6zm46.8-3c-.6-.8-1.2-1.6-1.8-2.3l.8-.7c.7.8 1.3 1.6 1.9 2.4l-.9.6zm-43.6-1.9l-.8-.6c.6-.8 1.3-1.5 2.1-2.2l.7.7c-.7.6-1.4 1.3-2 2.1zm39.8-2.5c-.7-.7-1.5-1.3-2.2-1.9l.6-.8c.8.6 1.6 1.3 2.3 2l-.7.7zm-35.6-1.6l-.6-.8c.8-.6 1.6-1.2 2.5-1.8l.5.8-2.4 1.8zm30.9-2c-.8-.5-1.7-1-2.6-1.4l.4-.9c.9.4 1.8.9 2.7 1.4l-.5.9zm-25.9-1.1l-.4-.9c.9-.4 1.9-.8 2.8-1.2l.3.9c-.9.4-1.8.7-2.7 1.2zm20.6-1.3c-.9-.3-1.9-.6-2.8-.8l.2-1c1 .2 2 .5 2.9.8l-.3 1zm-15.1-.7l-.2-1c1-.2 2-.4 3-.5l.1 1c-.9.1-1.9.3-2.9.5zm9.3-.6c-1-.1-2-.2-3-.2h-.4v-1h.6c1 0 2 .1 3 .2l-.2 1z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M3.5 3.8c.5 0 1 .1 1.3.4.4.3.6.6.9 1 .2.4.3.9.4 1.4s.1 1.1.1 1.6c0 .6 0 1.1-.1 1.6s-.2 1-.5 1.4c-.2.4-.5.8-.9 1-.4.3-.8.4-1.3.4s-1-.1-1.3-.4c-.4-.3-.6-.6-.9-1s-.4-.9-.5-1.4c.1-.4 0-1 0-1.5 0-.6 0-1.1.1-1.6s.2-1 .5-1.4.5-.8.9-1c.3-.4.8-.5 1.3-.5zm0 .7c-.4 0-.7.1-.9.3-.3.3-.5.6-.6 1-.2.3-.3.7-.3 1.2s-.1.8-.1 1.3c0 .4 0 .9.1 1.3 0 .4.1.8.3 1.2.1.4.3.6.6.9.2.2.5.3.9.3s.7-.1.9-.3c.2-.2.4-.5.6-.9l.3-1.2c.1-.4.1-.9.1-1.3s0-.9-.1-1.3c0-.5-.1-.9-.3-1.2-.1-.4-.3-.7-.6-.9-.2-.3-.5-.4-.9-.4z"
+      transform="translate(133.5 254.5)"
+    />
+  </g>
+  <path className="prefix__st4" d="M136.7 153.5h1v74.1h-1z" />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M137.2 232.9l-3.5-7 3.5 1.8 3.5-1.8-3.5 7z"
+  />
+  <path
+    className="prefix__st4"
+    d="M137.2 234l-4.6-9.2 4.6 2.3 4.6-2.3-4.6 9.2zm-2.4-7l2.4 4.8 2.4-4.8-2.4 1.2-2.4-1.2z"
+  />
+  <circle
+    pointerEvents="none"
+    className="prefix__st0"
+    cx={246.5}
+    cy={125.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M246.5 153.8c-15.6 0-28.3-12.7-28.3-28.3s12.7-28.3 28.3-28.3 28.3 12.7 28.3 28.3-12.7 28.3-28.3 28.3zm0-55.6c-15 0-27.3 12.2-27.3 27.3s12.2 27.3 27.3 27.3 27.3-12.2 27.3-27.3-12.3-27.3-27.3-27.3z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M7.5 7.5c0 .4-.1.8-.2 1.2-.1.4-.3.7-.6 1-.2.3-.5.5-.9.7-.4.2-.8.3-1.2.3-.4 0-.8-.1-1.1-.2-.4-.2-.6-.5-.8-.8v.8H.8V1.4h2v3.7c.2-.1.4-.3.7-.5.3-.2.7-.3 1.1-.3.4 0 .8.1 1.2.3.4.2.7.4.9.7s.4.6.6 1 .2.8.2 1.2zm-1.9 0c0-.2 0-.4-.1-.6-.1-.2-.2-.3-.3-.5-.1-.1-.2-.2-.4-.3-.2-.1-.4-.1-.6-.1-.3 0-.5 0-.6.1-.2.1-.4.2-.5.3-.1.2-.2.4-.3.5 0 .2-.1.4-.1.6s0 .4.1.6c.1.1.2.3.3.5.1.1.3.3.5.3.1.1.3.1.6.1.2 0 .4 0 .6-.1.2-.1.3-.2.4-.3.1-.1.2-.3.3-.5.1-.2.1-.4.1-.6zm7.1 3v-.8c-.1.1-.2.3-.3.4-.1.1-.3.2-.4.3-.2.1-.3.2-.5.2s-.4.1-.6.1c-.4 0-.7-.1-1-.2-.3-.1-.5-.3-.7-.6-.2-.2-.3-.5-.4-.8-.1-.3-.1-.6-.1-.9V4.5h2v3.7c0 .2.1.3.1.4s.2.2.3.3c.1.1.3.1.4.1.3 0 .6-.1.8-.4.2-.3.3-.6.3-.9V4.5h2v6h-1.9zM18.2 6v2.3c0 .3.1.5.2.6s.3.2.6.2h.3c.1 0 .2 0 .3-.1v1.4c-.1 0-.3.1-.5.1s-.4.1-.6.1c-.4 0-.7 0-1-.2-.3-.1-.5-.2-.7-.4s-.3-.4-.4-.7c-.1-.3-.1-.6-.1-.9V6h-1V4.5h.9V3h1.9v1.6h1.4V6h-1.3z"
+      transform="translate(226.5 118.5)"
+    />
+    <path
+      className="prefix__st3"
+      d="M22.4 6v2.3c0 .3.1.5.2.6s.3.2.6.2h.3c.1 0 .2 0 .3-.1v1.4c-.1 0-.3.1-.5.1s-.4.1-.6.1c-.4 0-.7 0-1-.2-.3-.1-.5-.2-.7-.4s-.3-.4-.4-.7c-.1-.3-.1-.6-.1-.9V6h-1V4.5h.9V3h1.9v1.6h1.4V6h-1.3zm8.7 1.5c0 .5-.1.9-.3 1.3-.2.4-.4.7-.7 1-.3.3-.7.5-1.1.6-.4.2-.8.2-1.3.2-.4 0-.9-.1-1.3-.2-.4-.2-.8-.4-1.1-.6-.3-.3-.5-.6-.7-1-.2-.4-.3-.8-.3-1.3s.1-.9.3-1.3c.2-.4.4-.7.7-1 .3-.3.7-.5 1.1-.6.4-.1.8-.2 1.3-.2s.9.1 1.3.2.8.4 1.1.6c.3.3.5.6.7 1 .2.4.3.8.3 1.3zm-1.9 0c0-.2 0-.4-.1-.6-.1-.2-.2-.3-.3-.5-.1-.1-.3-.3-.4-.3-.2-.1-.4-.1-.6-.1-.2 0-.4 0-.6.1-.2.1-.3.2-.4.3-.1.1-.2.3-.3.5-.1.2-.1.4-.1.6 0 .2 0 .4.1.6.1.2.2.4.3.5l.4.4c.1.1.3 0 .6 0s.4 0 .6-.1c.2-.1.3-.2.4-.4.1-.1.2-.3.3-.5 0-.1.1-.3.1-.5zm7 3V6.7c0-.2-.1-.3-.1-.4l-.3-.3h-.4c-.1 0-.4 0-.5.1l-.3.3c-.1.1-.2.3-.2.4 0 .2-.1.3-.1.5v3.2h-2v-6h1.9v.8c.1-.1.2-.3.3-.4.1-.1.3-.2.4-.3.2-.1.3-.2.5-.2.2-.1.4-.1.6-.1.4 0 .7.1 1 .2.3.1.5.3.7.6.2.2.3.5.4.8s.1.6.1.9v3.7h-2z"
+      transform="translate(226.5 118.5)"
+    />
+  </g>
+  <path
+    transform="rotate(-48.645 189.547 75.453)"
+    className="prefix__st4"
+    d="M189 33.4h1v84.1h-1z"
+  />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M225 106.7l-7.6-2 3.6-1.5 1-3.8 3 7.3z"
+  />
+  <path
+    className="prefix__st4"
+    d="M225.9 107.4l-10-2.6 4.8-1.9 1.3-5 3.9 9.5zm-6.9-2.8l5.2 1.4-2-4.9-.7 2.6-2.5.9z"
+  />
+  <circle
+    pointerEvents="none"
+    className="prefix__st5"
+    cx={246.5}
+    cy={261.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M246.8 289.8v-1c1 0 2-.1 2.9-.2l.1 1c-1 .1-2 .1-3 .2zm-3.1-.2c-1-.1-2-.3-3-.5l.2-1c1 .2 1.9.3 2.9.4l-.1 1.1zm9.1-.6l-.2-1c1-.2 1.9-.5 2.8-.8l.3.9c-.9.4-1.9.7-2.9.9zm-15-.6c-1-.3-1.9-.7-2.8-1.1l.4-.9c.9.4 1.8.8 2.7 1.1l-.3.9zm20.8-1.3l-.4-.9c.9-.4 1.8-.9 2.6-1.4l.5.9c-.9.4-1.8.9-2.7 1.4zm-26.4-1.2c-.9-.5-1.7-1.1-2.5-1.7l.6-.8c.8.6 1.6 1.1 2.5 1.6l-.6.9zm31.6-2l-.6-.8c.8-.6 1.5-1.2 2.2-1.9l.7.7c-.7.7-1.5 1.3-2.3 2zm-36.5-1.7c-.7-.7-1.5-1.4-2.1-2.2l.8-.7c.6.7 1.3 1.4 2.1 2.1l-.8.8zm40.9-2.6l-.8-.6c.6-.8 1.2-1.5 1.8-2.4l.8.6c-.5.8-1.2 1.7-1.8 2.4zm-44.9-1.9c-.6-.8-1.1-1.7-1.6-2.6l.9-.5c.5.9 1 1.7 1.6 2.5l-.9.6zm48.3-3.1l-.9-.5c.5-.9.9-1.8 1.2-2.7l.9.4c-.3 1-.8 1.9-1.2 2.8zm-51.2-2.3c-.4-.9-.7-1.9-1-2.9l1-.3c.3.9.6 1.9 1 2.8l-1 .4zm53.4-3.4l-1-.3c.3-.9.5-1.9.6-2.9l1 .2c-.1 1-.3 2-.6 3zm-55.1-2.4c-.2-1-.3-2-.4-3l1-.1c.1 1 .2 2 .4 2.9l-1 .2zm56.1-3.6h-1V260l1-.1v3zm-55.6-2.5h-1c0-1 .1-2 .3-3l1 .1c-.1 1-.2 1.9-.3 2.9zm54.2-3.4c-.2-1-.4-1.9-.6-2.9l1-.3c.3 1 .5 2 .7 3l-1.1.2zm-53.3-2.4l-1-.3c.3-1 .6-2 .9-2.9l.9.4c-.3.9-.6 1.9-.8 2.8zm51.7-3.3l-1.2-2.7.9-.5c.5.9.9 1.8 1.3 2.8l-1 .4zm-49.6-2.2l-.9-.5c.5-.9 1-1.8 1.5-2.6l.8.5c-.5.9-1 1.7-1.4 2.6zm46.8-3c-.6-.8-1.2-1.6-1.8-2.3l.8-.7c.7.8 1.3 1.6 1.9 2.4l-.9.6zm-43.6-1.9l-.8-.6c.6-.8 1.3-1.5 2.1-2.2l.7.7c-.7.6-1.4 1.3-2 2.1zm39.8-2.5c-.7-.7-1.5-1.3-2.2-1.9l.6-.8c.8.6 1.6 1.3 2.3 2l-.7.7zm-35.6-1.6l-.6-.8c.8-.6 1.6-1.2 2.5-1.8l.5.8-2.4 1.8zm30.9-2c-.8-.5-1.7-1-2.6-1.4l.4-.9c.9.4 1.8.9 2.7 1.4l-.5.9zm-25.9-1.1l-.4-.9c.9-.4 1.9-.8 2.8-1.2l.3.9c-.9.4-1.8.7-2.7 1.2zm20.6-1.3c-.9-.3-1.9-.6-2.8-.8l.2-1c1 .2 2 .5 2.9.8l-.3 1zm-15.1-.7l-.2-1c1-.2 2-.4 3-.5l.1 1c-.9.1-1.9.3-2.9.5zm9.3-.6c-1-.1-2-.2-3-.2h-.4v-1h.6c1 0 2 .1 3 .2l-.2 1z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M3.8 9.9H1.2v-.7h2.7v.7z"
+      transform="translate(243.5 254.5)"
+    />
+  </g>
+  <path className="prefix__st4" d="M246.2 153.5h1v74.1h-1z" />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M246.7 232.9l-3.5-7 3.5 1.8 3.5-1.8-3.5 7z"
+  />
+  <path
+    className="prefix__st4"
+    d="M246.7 234l-4.6-9.2 4.6 2.3 4.6-2.3-4.6 9.2zm-2.4-7l2.4 4.8 2.4-4.8-2.4 1.2-2.4-1.2z"
+  />
+  <circle
+    pointerEvents="none"
+    className="prefix__st0"
+    cx={569.5}
+    cy={29.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M569.5 57.8c-15.6 0-28.3-12.7-28.3-28.3s12.7-28.3 28.3-28.3 28.3 12.7 28.3 28.3-12.7 28.3-28.3 28.3zm0-55.6c-15 0-27.3 12.2-27.3 27.3s12.2 27.3 27.3 27.3 27.3-12.2 27.3-27.3-12.3-27.3-27.3-27.3z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M5.7 10.5v-.8c-.2.3-.5.5-.8.7-.4.2-.7.2-1.1.2-.4 0-.8-.1-1.2-.3-.5-.1-.8-.3-1-.6s-.4-.6-.6-1C.9 8.3.8 7.9.8 7.5s.1-.8.2-1.2.3-.7.6-1 .5-.5.9-.7.7-.3 1.2-.3c.4 0 .8.1 1.1.3s.5.4.7.6V1.4h2v9.1H5.7zm-.1-3c0-.2 0-.4-.1-.6-.1-.1-.2-.3-.3-.5-.1-.1-.3-.2-.4-.3-.2-.1-.4-.1-.6-.1-.3 0-.5 0-.7.1-.1.1-.3.2-.4.3-.1.2-.2.3-.3.5 0 .2-.1.4-.1.6 0 .2 0 .4.1.6.1.1.2.3.3.5.1.1.3.3.4.3s.4.1.7.1c.2 0 .4 0 .6-.1s.3-.2.5-.3c.1-.1.2-.3.3-.5v-.6zm5.6-4.9c0 .2 0 .3-.1.4-.1.1-.1.2-.2.3-.1.1-.2.2-.4.2-.1.1-.3.1-.4.1-.3 0-.6-.1-.8-.3s-.4-.4-.4-.7c0-.1 0-.3.1-.4.1-.1.1-.2.2-.3.1-.1.2-.2.4-.2.1-.1.3-.2.4-.2.2 0 .3 0 .4.1.1.1.3.1.4.2.1.1.2.2.2.3.1.2.2.4.2.5zm-2.1 7.9v-6h2v6h-2zm7.2 0h-2.1l-2.4-6H14l1.3 3.9 1.3-3.9h2.1l-2.4 6z"
+      transform="translate(559.5 22.5)"
+    />
+  </g>
+  <circle
+    pointerEvents="none"
+    className="prefix__st0"
+    cx={461.5}
+    cy={125.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M461.5 153.8c-15.6 0-28.3-12.7-28.3-28.3s12.7-28.3 28.3-28.3 28.3 12.7 28.3 28.3-12.7 28.3-28.3 28.3zm0-55.6c-15 0-27.3 12.2-27.3 27.3s12.2 27.3 27.3 27.3 27.3-12.2 27.3-27.3-12.3-27.3-27.3-27.3z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M7.5 7.5c0 .4-.1.8-.2 1.2-.1.4-.3.7-.6 1-.2.3-.5.5-.9.7-.4.2-.8.3-1.2.3-.4 0-.8-.1-1.1-.2-.4-.2-.6-.5-.8-.8v.8H.8V1.4h2v3.7c.2-.1.4-.3.7-.5s.7-.3 1.1-.3c.4 0 .8.1 1.2.3s.7.4.9.7.4.6.6 1 .2.8.2 1.2zm-1.9 0c0-.2 0-.4-.1-.6-.1-.2-.2-.3-.3-.5-.1-.1-.2-.2-.4-.3-.2-.1-.4-.1-.6-.1-.3 0-.5 0-.6.1-.2.1-.4.2-.5.3-.1.2-.2.4-.3.5 0 .2-.1.4-.1.6s0 .4.1.6c.1.1.2.3.3.5.1.1.3.3.5.3.1.1.3.1.6.1.2 0 .4 0 .6-.1.2-.1.3-.2.4-.3.1-.1.2-.3.3-.5.1-.2.1-.4.1-.6zm7.1 3v-.8c-.1.1-.2.3-.3.4-.1.1-.3.2-.4.3s-.3.2-.5.2c-.2.1-.4.1-.6.1-.4 0-.7-.1-1-.2-.3-.1-.5-.3-.7-.6-.2-.2-.3-.5-.4-.8s-.1-.6-.1-.9V4.5h2v3.7c0 .2.1.3.1.4l.3.3c.1.1.3.1.4.1.3 0 .6-.1.8-.4s.3-.6.3-.9V4.5h2v6h-1.9zM18.2 6v2.3c0 .3.1.5.2.6.1.1.3.2.6.2h.3c.1 0 .2 0 .3-.1v1.4c-.1 0-.3.1-.5.1s-.4.1-.6.1c-.4 0-.7 0-1-.2-.3-.1-.5-.2-.7-.4s-.3-.4-.4-.7-.1-.6-.1-.9V6h-1V4.5h.9V3h1.9v1.6h1.4V6h-1.3z"
+      transform="translate(441.5 118.5)"
+    />
+    <path
+      className="prefix__st3"
+      d="M22.4 6v2.3c0 .3.1.5.2.6.1.1.3.2.6.2h.3c.1 0 .2 0 .3-.1v1.4c-.1 0-.3.1-.5.1s-.4.1-.6.1c-.4 0-.7 0-1-.2-.3-.1-.5-.2-.7-.4s-.3-.4-.4-.7c-.1-.3-.1-.6-.1-.9V6h-1V4.5h.9V3h1.9v1.6h1.4V6h-1.3zm8.7 1.5c0 .5-.1.9-.3 1.3-.2.4-.4.7-.7 1-.3.3-.7.5-1.1.6-.4.2-.8.2-1.3.2-.4 0-.9-.1-1.3-.2-.4-.2-.8-.4-1.1-.6-.3-.3-.5-.6-.7-1-.2-.4-.3-.8-.3-1.3s.1-.9.3-1.3c.2-.4.4-.7.7-1 .3-.3.7-.5 1.1-.6.4-.1.8-.2 1.3-.2s.9.1 1.3.2.8.4 1.1.6c.3.3.5.6.7 1 .2.4.3.8.3 1.3zm-1.9 0c0-.2 0-.4-.1-.6-.1-.2-.2-.3-.3-.5-.1-.1-.3-.3-.4-.3-.2-.1-.4-.1-.6-.1-.2 0-.4 0-.6.1-.2.1-.3.2-.4.3-.1.1-.2.3-.3.5-.1.2-.1.4-.1.6 0 .2 0 .4.1.6.1.2.2.4.3.5l.4.4c.1.1.3 0 .6 0s.4 0 .6-.1c.2-.1.3-.2.4-.4.1-.1.2-.3.3-.5 0-.1.1-.3.1-.5zm7 3V6.7c0-.2-.1-.3-.1-.4l-.3-.3h-.4c-.1 0-.4 0-.5.1l-.3.3c-.1.1-.2.3-.2.4 0 .2-.1.3-.1.5v3.2h-2v-6h1.9v.8c.1-.1.2-.3.3-.4.1-.1.3-.2.4-.3.2-.1.3-.2.5-.2.2-.1.4-.1.6-.1.4 0 .7.1 1 .2.3.1.5.3.7.6.2.2.3.5.4.8s.1.6.1.9v3.7h-2z"
+      transform="translate(441.5 118.5)"
+    />
+  </g>
+  <path
+    transform="rotate(-41.911 517.542 75.32)"
+    className="prefix__st4"
+    d="M476.1 74.8H559v1h-82.9z"
+  />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M482.8 106.5l2.9-7.3 1 3.8 3.6 1.4-7.5 2.1z"
+  />
+  <path
+    className="prefix__st4"
+    d="M482 107.2l3.8-9.6 1.4 5 4.8 1.9-10 2.7zm3.6-6.4l-2 5 5.1-1.4-2.5-1-.6-2.6z"
+  />
+  <circle
+    pointerEvents="none"
+    className="prefix__st5"
+    cx={461.5}
+    cy={261.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M461.8 289.8v-1c1 0 2-.1 2.9-.2l.1 1c-1 .1-2 .1-3 .2zm-3.1-.2c-1-.1-2-.3-3-.5l.2-1c1 .2 1.9.3 2.9.4l-.1 1.1zm9.1-.6l-.2-1c1-.2 1.9-.5 2.8-.8l.3.9c-.9.4-1.9.7-2.9.9zm-15-.6c-1-.3-1.9-.7-2.8-1.1l.4-.9c.9.4 1.8.8 2.7 1.1l-.3.9zm20.8-1.3l-.4-.9c.9-.4 1.8-.9 2.6-1.4l.5.9c-.9.4-1.8.9-2.7 1.4zm-26.4-1.2c-.9-.5-1.7-1.1-2.5-1.7l.6-.8c.8.6 1.6 1.1 2.5 1.6l-.6.9zm31.6-2l-.6-.8c.8-.6 1.5-1.2 2.2-1.9l.7.7c-.7.7-1.5 1.3-2.3 2zm-36.5-1.7c-.7-.7-1.5-1.4-2.1-2.2l.8-.7c.6.7 1.3 1.5 2.1 2.1l-.8.8zm40.9-2.6l-.8-.6c.6-.7 1.2-1.5 1.8-2.4l.8.6c-.6.9-1.2 1.7-1.8 2.4zm-44.9-1.9c-.6-.8-1.1-1.7-1.6-2.6l.9-.5c.5.9 1 1.7 1.6 2.5l-.9.6zm48.3-3.1l-.9-.5c.5-.9.9-1.8 1.2-2.7l.9.4c-.3 1-.8 1.9-1.2 2.8zm-51.2-2.3c-.4-.9-.7-1.9-1-2.9l1-.3c.3.9.6 1.9 1 2.8l-1 .4zm53.4-3.4l-1-.3c.3-.9.5-1.9.6-2.9l1 .2c-.1 1-.3 2-.6 3zm-55.1-2.4c-.2-1-.3-2-.4-3l1-.1c.1 1 .2 2 .4 2.9l-1 .2zm56-3.6h-1V260l1-.1v1.7c.1.4.1.8 0 1.3zm-55.5-2.5h-1c0-1 .1-2 .3-3l1 .1c-.1 1-.2 1.9-.3 2.9zm54.2-3.4c-.2-1-.4-1.9-.6-2.9l1-.3c.3 1 .5 2 .7 3l-1.1.2zm-53.3-2.4l-1-.3c.3-1 .6-2 .9-2.9l.9.4c-.3.9-.6 1.9-.8 2.8zm51.7-3.3l-1.2-2.7.9-.5c.5.9.9 1.8 1.3 2.8l-1 .4zm-49.6-2.2l-.9-.5c.5-.9 1-1.8 1.5-2.6l.8.5c-.5.9-1 1.7-1.4 2.6zm46.8-3c-.6-.8-1.2-1.6-1.8-2.3l.8-.7c.7.8 1.3 1.6 1.9 2.4l-.9.6zm-43.6-1.9l-.8-.6c.6-.8 1.3-1.5 2.1-2.2l.7.7c-.7.6-1.4 1.3-2 2.1zm39.8-2.5c-.7-.7-1.5-1.3-2.2-1.9l.6-.8c.8.6 1.6 1.3 2.3 2l-.7.7zm-35.6-1.6l-.6-.8c.8-.6 1.6-1.2 2.5-1.8l.5.8-2.4 1.8zm30.9-2c-.8-.5-1.7-1-2.6-1.4l.4-.9c.9.4 1.8.9 2.7 1.4l-.5.9zm-25.9-1.1l-.4-.9c.9-.4 1.9-.8 2.8-1.2l.3.9c-.9.4-1.8.7-2.7 1.2zm20.6-1.3c-.9-.3-1.9-.6-2.8-.8l.2-1c1 .2 2 .5 2.9.8l-.3 1zm-15.1-.7l-.2-1c1-.2 2-.4 3-.5l.1 1c-.9.1-1.9.3-2.9.5zm9.3-.6c-1.1-.1-2.3-.2-3.5-.2v-1c1.2 0 2.4 0 3.6.2l-.1 1z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M4.9 8.5h2.7v.7H4.9v2.7h-.8V9.2H1.4v-.7h2.7V5.8h.7v2.7z"
+      transform="translate(456.5 254.5)"
+    />
+  </g>
+  <path className="prefix__st4" d="M460.8 153.5h1v74.1h-1z" />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M461.3 232.9l-3.5-7 3.5 1.8 3.5-1.8-3.5 7z"
+  />
+  <path
+    className="prefix__st4"
+    d="M461.3 234l-4.6-9.2 4.6 2.3 4.6-2.3-4.6 9.2zm-2.4-7l2.4 4.8 2.4-4.8-2.4 1.2-2.4-1.2z"
+  />
+  <circle
+    pointerEvents="none"
+    className="prefix__st0"
+    cx={569.5}
+    cy={125.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M569.5 153.8c-15.6 0-28.3-12.7-28.3-28.3s12.7-28.3 28.3-28.3 28.3 12.7 28.3 28.3-12.7 28.3-28.3 28.3zm0-55.6c-15 0-27.3 12.2-27.3 27.3s12.2 27.3 27.3 27.3 27.3-12.2 27.3-27.3-12.3-27.3-27.3-27.3z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M4.9 6.3c-.1-.2-.3-.3-.5-.4-.3-.1-.5-.2-.7-.2-.2 0-.4 0-.5.1-.2.1-.3.3-.3.4 0 .2.1.3.3.4.2.1.4.1.8.2.2 0 .5.1.7.2l.6.3c.2.1.3.3.4.5s.2.5.2.7c0 .4-.1.7-.2 1-.2.3-.4.5-.6.6-.2.2-.5.3-.8.3-.3.1-.6.1-.9.1-.5 0-1-.1-1.4-.2-.5-.2-.9-.4-1.2-.7l1.1-1.2c.1.4.4.6.6.7.3.1.5.2.8.2.2 0 .3 0 .5-.1S4 9 4 8.8s-.1-.3-.3-.4c-.1-.1-.4-.2-.8-.3-.3-.1-.5-.1-.7-.2-.2-.1-.4-.2-.5-.3-.2-.2-.3-.3-.4-.5-.1-.2-.2-.5-.2-.8 0-.4.1-.7.2-.9l.6-.6c.2-.2.5-.3.8-.4.3 0 .6-.1.9-.1.4 0 .9.1 1.3.2s.8.4 1.1.7L4.9 6.3zm8.8 1.2c0 .4-.1.8-.2 1.2-.1.4-.3.7-.6 1s-.5.5-.9.7c-.4.2-.8.3-1.2.3-.4 0-.7-.1-1-.2-.3-.1-.6-.4-.8-.6v3.5H7V4.5h1.9v.7c.3-.2.5-.4.8-.6s.7-.3 1.1-.3c.4 0 .8.1 1.2.3.4.2.7.4 1 .7s.4.6.6 1c0 .4.1.8.1 1.2zm-1.9 0c0-.2 0-.4-.1-.6-.1-.2-.1-.3-.3-.5-.1-.1-.3-.3-.4-.3-.2-.1-.4-.1-.6-.1-.2 0-.4 0-.6.1-.2.1-.3.2-.4.3-.2.2-.3.4-.3.5-.1.2-.1.4-.1.6s0 .4.1.6c.1.2.2.3.3.5.1.1.3.3.4.3s.4.1.6.1c.2 0 .4 0 .6-.1.2-.1.3-.2.4-.3.1-.1.2-.3.3-.5.1-.2.1-.4.1-.6zm3.1-2.2c.4-.3.8-.6 1.2-.8s.9-.3 1.4-.3c.5 0 .9.1 1.3.2.3.1.6.3.8.6.2.3.4.6.5 1 .1.4.2.9.2 1.4v3h-1.8v-.5c-.2.2-.4.4-.7.6-.3.1-.6.2-1 .2-.2 0-.5 0-.7-.1-.3-.1-.5-.2-.7-.3-.2-.1-.4-.3-.5-.6-.1-.2-.2-.5-.2-.9s.1-.8.4-1c.2-.3.5-.5.9-.6l1.2-.3c.4-.1.9-.1 1.3-.1v-.1c0-.3-.1-.5-.3-.7-.2-.1-.5-.2-.8-.2-.3 0-.5.1-.8.2-.3.1-.5.3-.7.4l-1-1.1zm3.6 2.6h-1c-.1 0-.3.1-.5.1-.2.1-.3.1-.4.2-.1.1-.2.2-.2.4 0 .1 0 .2.1.3l.2.2c.1 0 .2.1.3.1h.3c.4 0 .7-.1.9-.3s.3-.5.3-.9v-.1zm7.2 2.6V6.7c0-.2-.1-.3-.1-.4l-.3-.3h-.5c-.2 0-.3 0-.5.1s-.2.1-.3.3-.2.3-.2.4c0 .2-.1.3-.1.5v3.2h-2v-6h1.9v.8c.1-.1.2-.2.4-.3.1-.1.3-.2.4-.3.2-.1.3-.2.5-.2.2-.1.4-.1.6-.1.4 0 .7.1 1 .2.3.1.5.3.7.6.2.2.3.5.4.8s.1.6.1.9v3.7h-2z"
+      transform="translate(554.5 118.5)"
+    />
+  </g>
+  <path className="prefix__st4" d="M568.7 57h1v34.7h-1z" />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M569.2 96.9l-3.5-7 3.5 1.8 3.5-1.8-3.5 7z"
+  />
+  <path
+    className="prefix__st4"
+    d="M569.2 98l-4.6-9.2 4.6 2.3 4.6-2.3-4.6 9.2zm-2.4-7l2.4 4.8 2.4-4.8-2.4 1.2-2.4-1.2z"
+  />
+  <circle
+    pointerEvents="none"
+    cx={569.5}
+    cy={261.5}
+    fill="hsl(var(--palette-accent-50))"
+    r={27.8}
+  />
+  <path
+    d="M569.8 289.8v-1c1 0 2-.1 2.9-.2l.1 1c-1 .1-2 .1-3 .2zm-3.1-.2c-1-.1-2-.3-3-.5l.2-1c1 .2 1.9.3 2.9.4l-.1 1.1zm9.1-.6l-.2-1c1-.2 1.9-.5 2.8-.8l.3.9c-.9.4-1.9.7-2.9.9zm-15-.6c-1-.3-1.9-.7-2.8-1.1l.4-.9c.9.4 1.8.8 2.7 1.1l-.3.9zm20.8-1.3l-.4-.9c.9-.4 1.8-.9 2.6-1.4l.5.9c-.9.4-1.8.9-2.7 1.4zm-26.4-1.2c-.9-.5-1.7-1.1-2.5-1.7l.6-.8c.8.6 1.6 1.1 2.5 1.6l-.6.9zm31.6-2l-.6-.8c.8-.6 1.5-1.2 2.2-1.9l.7.7c-.7.7-1.5 1.3-2.3 2zm-36.5-1.7c-.7-.7-1.5-1.4-2.1-2.2l.8-.7c.6.7 1.3 1.5 2.1 2.1l-.8.8zm40.9-2.6l-.8-.6c.6-.7 1.2-1.5 1.8-2.4l.8.6c-.6.9-1.2 1.7-1.8 2.4zm-44.9-1.9c-.6-.8-1.1-1.7-1.6-2.6l.9-.5c.5.9 1 1.7 1.6 2.5l-.9.6zm48.3-3.1l-.9-.5c.5-.9.9-1.8 1.2-2.7l.9.4c-.3 1-.8 1.9-1.2 2.8zm-51.2-2.3c-.4-.9-.7-1.9-1-2.9l1-.3c.3.9.6 1.9 1 2.8l-1 .4zm53.4-3.4l-1-.3c.3-.9.5-1.9.6-2.9l1 .2c-.1 1-.3 2-.6 3zm-55.1-2.4c-.2-1-.3-2-.4-3l1-.1c.1 1 .2 2 .4 2.9l-1 .2zm56-3.6h-1V260l1-.1v1.7c.1.4.1.8 0 1.3zm-55.5-2.5h-1c0-1 .1-2 .3-3l1 .1c-.1 1-.2 1.9-.3 2.9zm54.2-3.4c-.2-1-.4-1.9-.6-2.9l1-.3c.3 1 .5 2 .7 3l-1.1.2zm-53.3-2.4l-1-.3c.3-1 .6-2 .9-2.9l.9.4c-.3.9-.6 1.9-.8 2.8zm51.7-3.3l-1.2-2.7.9-.5c.5.9.9 1.8 1.3 2.8l-1 .4zm-49.6-2.2l-.9-.5c.5-.9 1-1.8 1.5-2.6l.8.5c-.5.9-1 1.7-1.4 2.6zm46.8-3c-.6-.8-1.2-1.6-1.8-2.3l.8-.7c.7.8 1.3 1.6 1.9 2.4l-.9.6zm-43.6-1.9l-.8-.6c.6-.8 1.3-1.5 2.1-2.2l.7.7c-.7.6-1.4 1.3-2 2.1zm39.8-2.5c-.7-.7-1.5-1.3-2.2-1.9l.6-.8c.8.6 1.6 1.3 2.3 2l-.7.7zm-35.6-1.6l-.6-.8c.8-.6 1.6-1.2 2.5-1.8l.5.8-2.4 1.8zm30.9-2c-.8-.5-1.7-1-2.6-1.4l.4-.9c.9.4 1.8.9 2.7 1.4l-.5.9zm-25.9-1.1l-.4-.9c.9-.4 1.9-.8 2.8-1.2l.3.9c-.9.4-1.8.7-2.7 1.2zm20.6-1.3c-.9-.3-1.9-.6-2.8-.8l.2-1c1 .2 2 .5 2.9.8l-.3 1zm-15.1-.7l-.2-1c1-.2 2-.4 3-.5l.1 1c-.9.1-1.9.3-2.9.5zm9.3-.6c-1.1-.1-2.3-.2-3.5-.2v-1c1.2 0 2.4 0 3.6.2l-.1 1z"
+    fill="hsl(var(--palette-accent-30))"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st5"
+      d="M4 12.5V6.3L2.4 7.5l-1-1.4L4.2 4H6v8.5H4z"
+      transform="translate(564.5 254.5)"
+    />
+  </g>
+  <path className="prefix__st4" d="M568.7 153.5h1v74.1h-1z" />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M569.2 232.9l-3.5-7 3.5 1.8 3.5-1.8-3.5 7z"
+  />
+  <path
+    className="prefix__st4"
+    d="M569.2 234l-4.6-9.2 4.6 2.3 4.6-2.3-4.6 9.2zm-2.4-7l2.4 4.8 2.4-4.8-2.4 1.2-2.4-1.2z"
+  />
+  <circle
+    pointerEvents="none"
+    className="prefix__st0"
+    cx={678.5}
+    cy={125.5}
+    r={27.8}
+  />
+  <path
+    className="prefix__st1"
+    d="M678.5 153.8c-15.6 0-28.3-12.7-28.3-28.3s12.7-28.3 28.3-28.3 28.3 12.7 28.3 28.3-12.7 28.3-28.3 28.3zm0-55.6c-15 0-27.3 12.2-27.3 27.3s12.2 27.3 27.3 27.3 27.3-12.2 27.3-27.3-12.3-27.3-27.3-27.3z"
+  />
+  <g className="prefix__st2">
+    <path
+      className="prefix__st3"
+      d="M7.5 7.5c0 .4-.1.8-.2 1.2-.1.4-.3.7-.6 1-.2.3-.5.5-.9.7-.4.2-.8.3-1.2.3-.4 0-.8-.1-1.1-.2-.4-.2-.6-.5-.8-.8v.8H.8V1.4h2v3.7c.2-.1.4-.3.7-.5s.7-.3 1.1-.3c.4 0 .8.1 1.2.3s.7.4.9.7.4.6.6 1 .2.8.2 1.2zm-1.9 0c0-.2 0-.4-.1-.6-.1-.2-.2-.3-.3-.5-.1-.1-.2-.2-.4-.3-.2-.1-.4-.1-.6-.1-.3 0-.5 0-.6.1-.2.1-.4.2-.5.3-.1.2-.2.4-.3.5 0 .2-.1.4-.1.6s0 .4.1.6c.1.1.2.3.3.5.1.1.3.3.5.3.1.1.3.1.6.1.2 0 .4 0 .6-.1.2-.1.3-.2.4-.3.1-.1.2-.3.3-.5.1-.2.1-.4.1-.6zm7.1 3v-.8c-.1.1-.2.3-.3.4-.1.1-.3.2-.4.3s-.3.2-.5.2c-.2.1-.4.1-.6.1-.4 0-.7-.1-1-.2-.3-.1-.5-.3-.7-.6-.2-.2-.3-.5-.4-.8s-.1-.6-.1-.9V4.5h2v3.7c0 .2.1.3.1.4l.3.3c.1.1.3.1.4.1.3 0 .6-.1.8-.4s.3-.6.3-.9V4.5h2v6h-1.9zM18.2 6v2.3c0 .3.1.5.2.6.1.1.3.2.6.2h.3c.1 0 .2 0 .3-.1v1.4c-.1 0-.3.1-.5.1s-.4.1-.6.1c-.4 0-.7 0-1-.2-.3-.1-.5-.2-.7-.4s-.3-.4-.4-.7-.1-.6-.1-.9V6h-1V4.5h.9V3h1.9v1.6h1.4V6h-1.3z"
+      transform="translate(658.5 118.5)"
+    />
+    <path
+      className="prefix__st3"
+      d="M22.4 6v2.3c0 .3.1.5.2.6.1.1.3.2.6.2h.3c.1 0 .2 0 .3-.1v1.4c-.1 0-.3.1-.5.1s-.4.1-.6.1c-.4 0-.7 0-1-.2-.3-.1-.5-.2-.7-.4s-.3-.4-.4-.7c-.1-.3-.1-.6-.1-.9V6h-1V4.5h.9V3h1.9v1.6h1.4V6h-1.3zm8.7 1.5c0 .5-.1.9-.3 1.3-.2.4-.4.7-.7 1-.3.3-.7.5-1.1.6-.4.2-.8.2-1.3.2-.4 0-.9-.1-1.3-.2-.4-.2-.8-.4-1.1-.6-.3-.3-.5-.6-.7-1-.2-.4-.3-.8-.3-1.3s.1-.9.3-1.3c.2-.4.4-.7.7-1 .3-.3.7-.5 1.1-.6.4-.1.8-.2 1.3-.2s.9.1 1.3.2.8.4 1.1.6c.3.3.5.6.7 1 .2.4.3.8.3 1.3zm-1.9 0c0-.2 0-.4-.1-.6-.1-.2-.2-.3-.3-.5-.1-.1-.3-.3-.4-.3-.2-.1-.4-.1-.6-.1-.2 0-.4 0-.6.1-.2.1-.3.2-.4.3-.1.1-.2.3-.3.5-.1.2-.1.4-.1.6 0 .2 0 .4.1.6.1.2.2.4.3.5l.4.4c.1.1.3 0 .6 0s.4 0 .6-.1c.2-.1.3-.2.4-.4.1-.1.2-.3.3-.5 0-.1.1-.3.1-.5zm7 3V6.7c0-.2-.1-.3-.1-.4l-.3-.3h-.4c-.1 0-.4 0-.5.1l-.3.3c-.1.1-.2.3-.2.4 0 .2-.1.3-.1.5v3.2h-2v-6h1.9v.8c.1-.1.2-.3.3-.4.1-.1.3-.2.4-.3.2-.1.3-.2.5-.2.2-.1.4-.1.6-.1.4 0 .7.1 1 .2.3.1.5.3.7.6.2.2.3.5.4.8s.1.6.1.9v3.7h-2z"
+      transform="translate(658.5 118.5)"
+    />
+  </g>
+  <path
+    transform="rotate(-48.645 621.559 75.454)"
+    className="prefix__st4"
+    d="M621 33.4h1v84.1h-1z"
+  />
+  <path
+    pointerEvents="none"
+    className="prefix__st4"
+    d="M657 106.7l-7.6-2 3.6-1.5 1-3.8 3 7.3z"
+  />
+  <path
+    className="prefix__st4"
+    d="M657.9 107.4l-10-2.6 4.8-1.9 1.3-5 3.9 9.5zm-6.9-2.8l5.2 1.4-2-4.9-.7 2.6-2.5.9z"
+  />
+  <g>
+    <circle
+      pointerEvents="none"
+      className="prefix__st5"
+      cx={678.5}
+      cy={261.5}
+      r={27.8}
+    />
+    <path
+      className="prefix__st1"
+      d="M678.8 289.8v-1c1 0 2-.1 2.9-.2l.1 1c-1 .1-2 .1-3 .2zm-3.1-.2c-1-.1-2-.3-3-.5l.2-1c1 .2 1.9.3 2.9.4l-.1 1.1zm9.1-.6l-.2-1c1-.2 1.9-.5 2.8-.8l.3.9c-.9.4-1.9.7-2.9.9zm-15-.6c-1-.3-1.9-.7-2.8-1.1l.4-.9c.9.4 1.8.8 2.7 1.1l-.3.9zm20.8-1.3l-.4-.9c.9-.4 1.8-.9 2.6-1.4l.5.9c-.9.4-1.8.9-2.7 1.4zm-26.4-1.2c-.9-.5-1.7-1.1-2.5-1.7l.6-.8c.8.6 1.6 1.1 2.5 1.6l-.6.9zm31.6-2l-.6-.8c.8-.6 1.5-1.2 2.2-1.9l.7.7c-.7.7-1.5 1.3-2.3 2zm-36.5-1.7c-.7-.7-1.5-1.4-2.1-2.2l.8-.7c.6.7 1.3 1.5 2.1 2.1l-.8.8zm40.9-2.6l-.8-.6c.6-.7 1.2-1.5 1.8-2.4l.8.6c-.6.9-1.2 1.7-1.8 2.4zm-44.9-1.9c-.6-.8-1.1-1.7-1.6-2.6l.9-.5c.5.9 1 1.7 1.6 2.5l-.9.6zm48.3-3.1l-.9-.5c.5-.9.9-1.8 1.2-2.7l.9.4c-.3 1-.8 1.9-1.2 2.8zm-51.2-2.3c-.4-.9-.7-1.9-1-2.9l1-.3c.3.9.6 1.9 1 2.8l-1 .4zm53.4-3.4l-1-.3c.3-.9.5-1.9.6-2.9l1 .2c-.1 1-.3 2-.6 3zm-55.1-2.4c-.2-1-.3-2-.4-3l1-.1c.1 1 .2 2 .4 2.9l-1 .2zm56-3.6h-1V260l1-.1v1.7c.1.4.1.8 0 1.3zm-55.5-2.5h-1c0-1 .1-2 .3-3l1 .1c-.1 1-.2 1.9-.3 2.9zm54.2-3.4c-.2-1-.4-1.9-.6-2.9l1-.3c.3 1 .5 2 .7 3l-1.1.2zm-53.3-2.4l-1-.3c.3-1 .6-2 .9-2.9l.9.4c-.3.9-.6 1.9-.8 2.8zm51.7-3.3l-1.2-2.7.9-.5c.5.9.9 1.8 1.3 2.8l-1 .4zm-49.6-2.2l-.9-.5c.5-.9 1-1.8 1.5-2.6l.8.5c-.5.9-1 1.7-1.4 2.6zm46.8-3c-.6-.8-1.2-1.6-1.8-2.3l.8-.7c.7.8 1.3 1.6 1.9 2.4l-.9.6zm-43.6-1.9l-.8-.6c.6-.8 1.3-1.5 2.1-2.2l.7.7c-.7.6-1.4 1.3-2 2.1zm39.8-2.5c-.7-.7-1.5-1.3-2.2-1.9l.6-.8c.8.6 1.6 1.3 2.3 2l-.7.7zm-35.6-1.6l-.6-.8c.8-.6 1.6-1.2 2.5-1.8l.5.8-2.4 1.8zm30.9-2c-.8-.5-1.7-1-2.6-1.4l.4-.9c.9.4 1.8.9 2.7 1.4l-.5.9zm-25.9-1.1l-.4-.9c.9-.4 1.9-.8 2.8-1.2l.3.9c-.9.4-1.8.7-2.7 1.2zm20.6-1.3c-.9-.3-1.9-.6-2.8-.8l.2-1c1 .2 2 .5 2.9.8l-.3 1zm-15.1-.7l-.2-1c1-.2 2-.4 3-.5l.1 1c-.9.1-1.9.3-2.9.5zm9.3-.6c-1.1-.1-2.3-.2-3.5-.2v-1c1.2 0 2.4 0 3.6.2l-.1 1z"
+    />
+  </g>
+  <g>
+    <g className="prefix__st2">
+      <path
+        className="prefix__st3"
+        d="M3.8 9.9H1.2v-.7h2.7v.7z"
+        transform="translate(675.5 254.5)"
+      />
+    </g>
+  </g>
+  <g>
+    <path className="prefix__st4" d="M678.2 153.5h1v74.1h-1z" />
+  </g>
+  <g>
+    <path
+      pointerEvents="none"
+      className="prefix__st4"
+      d="M678.7 232.9l-3.5-7 3.5 1.8 3.5-1.8-3.5 7z"
+    />
+    <path
+      className="prefix__st4"
+      d="M678.7 234l-4.6-9.2 4.6 2.3 4.6-2.3-4.6 9.2zm-2.4-7l2.4 4.8 2.4-4.8-2.4 1.2-2.4-1.2z"
+    />
+  </g>
+  <g>
+    <path
+      d="M8.9 11.1c-.1.2-.3.4-.5.6-.2.2-.4.4-.7.5-.3.1-.6.3-.9.3-.3.1-.7.1-1.1.1-.6 0-1.2-.1-1.8-.3-.5-.2-1-.5-1.4-.9-.4-.4-.7-.9-.9-1.4s-.3-1.1-.3-1.7.1-1.3.3-1.8c.2-.5.5-1 .9-1.4.4-.4.9-.7 1.4-.9s1.1-.4 1.8-.4c.3 0 .6 0 .9.1.3.1.6.1.8.3.3.1.5.3.7.4s.4.4.5.6l-.6.5c-.1-.2-.2-.3-.4-.4-.1-.2-.3-.3-.5-.4-.2-.1-.4-.2-.6-.2-.3-.1-.5-.1-.8-.1-.6 0-1 .1-1.5.3-.4.2-.8.4-1.1.8-.3.3-.5.7-.7 1.1-.2.5-.2 1-.2 1.5s.1 1 .2 1.4c.2.4.4.8.7 1.2.3.3.7.6 1.1.8.4.2.9.3 1.5.3.5 0 1-.1 1.4-.3.4-.2.8-.5 1.1-1l.7.4zm5.5 1.4v-1c-.2.3-.4.6-.8.8s-.7.3-1.1.3c-.7 0-1.2-.2-1.6-.6s-.5-1-.5-1.7V6.9h.8V10c0 .3 0 .6.1.8s.1.4.2.6c.1.2.3.3.5.4.2.1.4.1.7.1.2 0 .4 0 .6-.1s.4-.2.5-.4c.2-.2.3-.4.4-.7.1-.3.1-.6.1-1V6.9h.8v5.6h-.7zm2.9-5v-.6h.7v1c.2-.3.4-.6.7-.8s.7-.3 1.1-.3h.6l-.1.8h-.5c-.2 0-.4 0-.6.1-.2.1-.4.2-.5.4s-.3.4-.4.7c-.1.3-.1.6-.1 1v2.9h-.8V8.1c-.1-.1-.1-.3-.1-.6zm4.3 0v-.6h.8v1c.2-.3.4-.6.7-.8s.7-.3 1.1-.3h.6l-.1.8h-.5c-.2 0-.4 0-.6.1-.2.1-.4.2-.5.4s-.3.4-.4.7c-.1.3-.1.6-.1 1v2.9h-.8V8.1c-.2-.1-.2-.3-.2-.6zm9.2 2v.4h-4.7c0 .3.1.5.2.8.1.2.2.5.4.6.2.2.4.3.6.4.2.1.5.2.8.2.4 0 .8-.1 1.1-.3s.5-.4.7-.7l.6.5c-.3.4-.7.7-1.1.9-.4.2-.8.3-1.3.3-.4 0-.8-.1-1.2-.2-.4-.1-.7-.4-.9-.6-.3-.3-.5-.6-.6-.9-.1-.4-.2-.8-.2-1.2 0-.4.1-.8.2-1.2.1-.4.3-.7.6-.9.4-.3.7-.5 1-.6.3-.1.7-.2 1.1-.2.4 0 .8.1 1.2.2.3.1.6.3.8.6.2.3.4.5.5.9.2.3.2.6.2 1zm-.8-.2c0-.5-.2-1-.5-1.3-.3-.3-.8-.5-1.3-.5-.3 0-.5 0-.8.2-.2.1-.4.2-.6.4s-.3.4-.4.6c-.1.2-.2.4-.2.7H30zm3.3-2.4v1c.2-.3.4-.6.8-.8s.7-.3 1.1-.3c.7 0 1.2.2 1.6.6.4.4.5 1 .5 1.7v3.4h-.8V9.4c0-.3 0-.6-.1-.8s0-.5-.1-.6c-.1-.2-.3-.3-.5-.4-.2-.1-.4-.1-.7-.1-.2 0-.4 0-.6.1-.2.1-.4.2-.5.4s-.3.4-.4.7c-.1.3-.1.6-.1 1v2.9h-.8V6.9h.6zm8.8.7h-1.6v3.3c0 .2 0 .4.1.5 0 .1.1.2.2.3.1.1.2.1.3.2h.7c.2 0 .2-.1.4-.1v.7c-.1.1-.3.1-.5.1h-.5c-.2 0-.3 0-.5-.1s-.3-.1-.5-.2c-.1-.1-.3-.3-.4-.5-.1-.2-.1-.4-.1-.8V7.6h-1.2v-.7h1.2V5.3h.8v1.6h1.6v.7zm7.2.6c-.1-.2-.3-.4-.5-.6-.2-.1-.5-.2-.8-.2h-.4c-.1 0-.3.1-.4.2l-.3.3c-.1.1-.1.2-.1.4 0 .3.1.5.3.6s.6.3 1 .4c.7.1 1.2.3 1.5.6.3.3.5.6.5 1.1 0 .3-.1.6-.2.8-.1.2-.3.4-.5.5-.2.1-.4.2-.7.3-.3.1-.5.1-.8.1-.4 0-.8-.1-1.2-.3-.4-.2-.7-.5-1-.8l.6-.5c.1.2.4.5.6.6.3.2.6.3.9.3h.5c.2 0 .3-.1.4-.2l.3-.3c.1-.1.1-.3.1-.5 0-.3-.1-.5-.4-.7-.3-.1-.7-.3-1.2-.4-.2 0-.3-.1-.5-.1-.2-.1-.4-.1-.5-.3-.2-.1-.3-.3-.4-.4-.1-.2-.1-.5-.1-.7 0-.3.1-.5.2-.7s.3-.4.5-.5l.6-.3c.2-.1.5-.1.7-.1.4 0 .8.1 1.1.3.4.2.6.4.8.7l-.6.4zm4.9-.6h-1.6v3.3c0 .2 0 .4.1.5 0 .1.1.2.2.3.1.1.2.1.3.2h.7c.2 0 .2-.1.4-.1v.7c-.1.1-.3.1-.5.1h-.5c-.2 0-.3 0-.5-.1s-.3-.1-.5-.2c-.1-.1-.3-.3-.4-.5-.1-.2-.1-.4-.1-.8V7.6h-1.2v-.7h1.2V5.3h.8v1.6h1.6v.7zM59 8.9c0-.5-.1-.8-.4-1.1-.3-.2-.6-.4-1.1-.4-.3 0-.6.1-.9.2-.3.1-.5.3-.7.5l-.5-.5c.2-.2.5-.4.9-.6.4-.2.8-.2 1.3-.2.3 0 .6 0 .9.1.3.1.5.2.7.4s.4.4.5.6.2.6.2.9V12c0 .2 0 .4.1.6h-.7c0-.1 0-.3-.1-.4v-.5c-.3.4-.5.6-.9.8-.3.2-.7.2-1.2.2-.2 0-.4 0-.7-.1l-.6-.3c-.2-.1-.3-.3-.5-.5-.1-.2-.2-.5-.2-.8 0-.4.1-.8.3-1 .2-.3.5-.4.9-.6.4-.1.8-.2 1.3-.2.4-.1.9-.2 1.4-.2v-.1zm-.2.8h-1c-.3 0-.6.1-.9.2-.3.1-.5.2-.7.4-.2.2-.3.4-.3.6 0 .2 0 .4.1.5l.3.3c.1.1.3.1.4.2.2 0 .3.1.5.1.3 0 .5 0 .8-.1.2-.1.4-.2.6-.4.2-.2.3-.4.3-.6.1-.2.1-.5.1-.7v-.5h-.2zm5.5-2.1h-1.6v3.3c0 .2 0 .4.1.5 0 .1.1.2.2.3.1.1.2.1.3.2h.7c.2 0 .2-.1.4-.1v.7c-.1.1-.3.1-.5.1h-.5c-.2 0-.3 0-.5-.1s-.3-.1-.5-.2c-.1-.1-.3-.3-.4-.5-.1-.2-.1-.4-.1-.8V7.6h-1.2v-.7h1.2V5.3h.8v1.6h1.6v.7zm6.4 1.9v.4H66c0 .3.1.5.2.8.1.2.2.5.4.6.2.2.4.3.6.4.2.1.5.2.8.2.4 0 .8-.1 1.1-.3s.5-.4.7-.7l.6.5c-.3.4-.7.7-1.1.9-.4.2-.8.3-1.3.3-.4 0-.8-.1-1.2-.2-.4-.1-.7-.4-.9-.6-.3-.3-.5-.6-.6-.9-.1-.4-.2-.8-.2-1.2 0-.4.1-.8.2-1.2.1-.4.3-.7.6-.9.3-.3.6-.5.9-.6.3-.1.7-.2 1.1-.2.4 0 .8.1 1.2.2.3.1.6.3.8.6.2.3.4.5.5.9.2.3.3.6.3 1zm-.9-.2c0-.5-.2-1-.5-1.3-.3-.4-.7-.6-1.3-.6-.3 0-.5 0-.8.2-.2.1-.4.2-.6.4s-.3.4-.4.6c-.1.2-.2.4-.2.7h3.8zm11.2.4c0 .4-.1.8-.2 1.2-.1.4-.4.7-.6.9-.3.3-.6.5-.9.6-.4.1-.8.2-1.2.2-.4 0-.8-.1-1.2-.2-.4-.1-.7-.4-.9-.6-.3-.3-.5-.6-.6-.9-.1-.4-.2-.8-.2-1.2 0-.4.1-.8.2-1.2.1-.4.4-.7.6-.9.3-.3.6-.5.9-.6.4-.1.8-.2 1.2-.2.4 0 .8.1 1.2.2.4.1.7.4.9.6.3.3.5.6.6.9.1.4.2.8.2 1.2zm-.9 0c0-.3 0-.6-.1-.9-.1-.3-.2-.5-.4-.7-.2-.2-.4-.4-.7-.5-.3-.1-.6-.2-.9-.2s-.6.1-.9.2c-.3.1-.5.3-.7.5-.2.2-.3.4-.4.7-.1.3-.1.6-.1.9 0 .3 0 .6.1.9.1.3.2.5.4.7.2.2.4.4.7.5.3.1.6.2.9.2s.6-.1.9-.2c.3-.1.5-.3.7-.5.2-.2.3-.4.4-.7.1-.3.1-.6.1-.9zm5-2.1h-1.3v4.9H83V7.6h-1.2v-.7H83V5.3c0-.6.2-1.1.5-1.5.3-.4.8-.6 1.4-.6h.3c.1 0 .2 0 .3.1l-.1.7c-.1 0-.2 0-.3-.1h-.3c-.2 0-.4 0-.5.1l-.3.3c-.1.1-.1.3-.2.5s0 .4 0 .6v1.4h1.3v.8zM89.6 4h2.8c.6 0 1.1.1 1.6.3.5.2 1 .4 1.4.8.4.4.8.8 1 1.3.3.5.4 1.1.4 1.9 0 .7-.1 1.3-.4 1.9-.3.5-.6 1-1 1.3-.4.4-.9.6-1.4.8s-1.1.3-1.6.3h-2.8V4zm.9 7.7h1.7c.6 0 1.2-.1 1.7-.3.5-.2.9-.5 1.2-.8.3-.3.5-.7.7-1.1.1-.4.2-.8.2-1.2 0-.4-.1-.9-.2-1.3-.2-.4-.4-.8-.7-1.1-.3-.3-.7-.6-1.2-.8s-1-.3-1.7-.3h-1.7v6.9zm16.6-3.4c0 .6-.1 1.2-.3 1.8-.2.5-.5 1-.9 1.4-.4.4-.9.7-1.4.9s-1.1.3-1.8.3-1.2-.1-1.8-.3-1-.5-1.4-.9c-.4-.4-.7-.9-.9-1.4s-.3-1.1-.3-1.8.1-1.2.3-1.8.5-1 .9-1.4c.4-.4.9-.7 1.4-.9s1.1-.3 1.8-.3 1.2.1 1.8.3 1 .5 1.4.9c.4.4.7.9.9 1.4.2.5.3 1.1.3 1.8zm-.9 0c0-.5-.1-1-.2-1.4s-.4-.8-.7-1.2c-.3-.3-.7-.6-1.1-.8-.4-.2-.9-.3-1.5-.3s-1 .1-1.5.3c-.4.2-.8.5-1.1.8-.3.3-.5.7-.7 1.2s-.2.9-.2 1.4.1 1 .2 1.4.4.8.7 1.2c.3.3.7.6 1.1.8.4.2.9.3 1.5.3s1-.1 1.5-.3c.4-.2.8-.5 1.1-.8.3-.3.5-.7.7-1.2s.2-.9.2-1.4zm6.9 2.7l2.9-7h1.3v8.5h-.9V5.1l-3.1 7.4h-.5l-3.1-7.4v7.4h-.9V4h1.3l3 7z"
+      transform="translate(78.5 327.5)"
+    />
+  </g>
+  <g>
+    <g className="prefix__st2">
+      <path
+        d="M4.5 11.4L7.3 4h.9l-3.3 8.5H4L.8 4h.9l2.8 7.4zm5.6-6.7c0 .2-.1.3-.2.4-.1.1-.3.2-.4.2-.1 0-.3-.1-.4-.2-.1-.1-.2-.2-.2-.4s.1-.3.2-.4c.1-.1.3-.2.4-.2.1 0 .3.1.4.2.1.1.2.3.2.4zm-.2 7.8h-.8V6.9h.8v5.6zm2.2-5v-.6h.8v1c.1-.4.4-.7.7-.9.3-.2.7-.3 1.1-.3h.6l-.1.8h-.5c-.2 0-.4 0-.6.1-.2.1-.4.2-.5.4-.1.2-.3.4-.4.7-.1.3-.1.6-.1 1v2.9h-.8V8.1c-.2-.1-.2-.3-.2-.6z"
+        transform="translate(492.5 327.5)"
+      />
+      <path
+        d="M18.8 7.6h-1.6v3.3c0 .2 0 .4.1.5 0 .1.1.2.2.3.1.1.2.1.3.2h.7c.1 0 .2-.1.4-.1v.7c-.1.1-.3.1-.5.1h-.5c-.2 0-.3 0-.5-.1s-.3-.1-.5-.2c-.1-.1-.3-.3-.4-.5-.1-.2-.1-.4-.1-.8V7.6h-1.2v-.7h1.2V5.3h.8v1.6h1.6v.7zm5.3 4.9v-1c-.2.3-.4.6-.8.8-.4.2-.7.3-1.1.3-.7 0-1.2-.2-1.6-.6-.4-.4-.5-1-.5-1.7V6.9h.8V10c0 .3 0 .6.1.8s.1.4.2.6.3.3.5.4c.2.1.4.1.7.1.2 0 .4 0 .6-.1s.4-.2.5-.4c.2-.2.3-.4.4-.7.1-.3.1-.6.1-1V6.9h.8v5.6h-.7zm6.5-3.6c0-.5-.1-.8-.4-1.1-.3-.2-.6-.4-1.1-.4-.3 0-.6.1-.9.2-.3.1-.5.3-.7.5l-.5-.5c.2-.2.5-.4.9-.6.4-.2.8-.2 1.3-.2.3 0 .6 0 .9.1.3.1.5.2.7.4s.4.4.5.6.2.6.2.9V12c0 .2 0 .4.1.6h-.7c0-.1 0-.3-.1-.4v-.5c-.3.4-.5.6-.9.8-.3.2-.7.2-1.2.2-.2 0-.4 0-.7-.1l-.6-.3c-.2-.1-.3-.3-.5-.5-.1-.2-.2-.5-.2-.8 0-.4.1-.8.3-1 .2-.3.5-.4.9-.6.4-.1.8-.2 1.3-.2s1-.1 1.5-.1v-.2zm-.3.8h-1c-.3 0-.6.1-.9.2-.3.1-.5.2-.7.4-.2.2-.3.4-.3.6 0 .2 0 .4.1.5l.3.3c.1.1.3.1.4.2.2 0 .3.1.5.1.3 0 .5 0 .8-.1.2-.1.4-.2.6-.4.2-.2.3-.4.3-.6.1-.2.1-.5.1-.7v-.5h-.2zm4 2.8h-.8V3.4h.8v9.1zM39.5 4h2.8c.5 0 1.1.1 1.6.3.5.2 1 .4 1.4.8.4.4.8.8 1 1.3.3.5.4 1.1.4 1.9 0 .7-.1 1.3-.4 1.9-.3.5-.6 1-1 1.3-.4.4-.9.6-1.4.8s-1.1.3-1.6.3h-2.8V4zm.9 7.7h1.7c.6 0 1.2-.1 1.7-.3.5-.2.9-.5 1.2-.8.3-.3.5-.7.7-1.1.2-.4.2-.8.2-1.3 0-.4-.1-.9-.2-1.3-.2-.4-.4-.8-.7-1.1-.3-.3-.7-.6-1.2-.8s-1-.3-1.7-.3h-1.7v7zM57 8.3c0 .6-.1 1.2-.3 1.8-.2.5-.5 1-.9 1.4-.4.4-.9.7-1.4.9s-1.1.3-1.8.3-1.2-.1-1.8-.3-1-.5-1.4-.9c-.4-.4-.7-.9-.9-1.4s-.3-1.1-.3-1.8.1-1.2.3-1.8.5-1 .9-1.4c.4-.4.9-.7 1.4-.9s1.1-.3 1.8-.3 1.2.1 1.8.3 1 .5 1.4.9c.4.4.7.9.9 1.4.2.5.3 1.1.3 1.8zm-.9 0c0-.5-.1-1-.2-1.4s-.5-.9-.8-1.2c-.3-.3-.7-.6-1.1-.8-.4-.2-.9-.3-1.5-.3s-1 .1-1.5.3c-.4.2-.8.5-1.1.8-.3.3-.5.7-.7 1.2s-.2.9-.2 1.4.1 1 .2 1.4.4.8.7 1.2c.3.3.7.6 1.1.8.4.2.9.3 1.5.3s1-.1 1.5-.3c.4-.2.8-.5 1.1-.8.3-.3.5-.7.7-1.2s.3-.9.3-1.4zM63 11l2.9-7h1.3v8.5h-.9V5.1l-3.1 7.4h-.5l-3.1-7.4v7.4h-.9V4H60l3 7zm12.9-2.1c0-.5-.1-.8-.4-1.1-.3-.2-.6-.4-1.1-.4-.3 0-.6.1-.9.2-.3.1-.5.3-.7.5l-.5-.5c.2-.2.5-.4.9-.6.4-.2.8-.2 1.3-.2.3 0 .6 0 .9.1l.6.3c.2.1.4.4.5.6s.2.6.2.9v3.2c0 .2 0 .4.1.6H76c0-.1 0-.3-.1-.4v-.5c-.3.4-.5.6-.9.8-.3.2-.7.2-1.2.2-.2 0-.4 0-.7-.1l-.6-.3c-.2-.1-.3-.3-.5-.5v-.8c0-.4.1-.8.3-1 .2-.3.5-.4.9-.6.4-.1.8-.2 1.3-.2s1-.1 1.5-.1v-.1zm-.2.8h-1c-.3 0-.6.1-.9.2-.3.1-.5.2-.7.4-.2.2-.3.4-.3.6 0 .2 0 .4.1.5l.3.3c.1.1.3.1.4.2.2 0 .3.1.5.1.3 0 .5 0 .8-.1.2-.1.4-.2.6-.4.2-.2.3-.4.3-.6.1-.2.1-.5.1-.7v-.5h-.2zm5.5-2.1h-1.3v4.9H79V7.6h-1.2v-.7H79V5.3c0-.6.2-1.1.5-1.5.3-.4.8-.6 1.4-.6h.3c.1 0 .2 0 .3.1l-.1.7c-.1 0-.2 0-.3-.1h-.3c-.2 0-.4 0-.5.1l-.3.3c-.1.1-.1.3-.2.5s0 .4 0 .6v1.4h1.3v.8z"
+        transform="translate(492.5 327.5)"
+      />
+      <path
+        d="M84.7 7.6h-1.6v3.3c0 .2 0 .4.1.5 0 .1.1.2.2.3.1.1.2.1.3.2h.7c.2 0 .2-.1.4-.1v.7c-.1.1-.3.1-.5.1h-.5c-.2 0-.3 0-.5-.1s-.3-.1-.5-.2c-.1-.1-.3-.3-.4-.5-.1-.2-.1-.4-.1-.8V7.6h-1.2v-.7h1.2V5.3h.8v1.6h1.6v.7zm6.4 1.9v.4h-4.7c0 .3.1.5.2.8.1.2.2.5.4.6.2.2.4.3.6.4.2.1.5.2.8.2.4 0 .8-.1 1.1-.3s.5-.4.7-.7l.6.5c-.3.4-.7.7-1.1.9-.4.2-.8.3-1.3.3-.4 0-.8-.1-1.2-.2-.4-.1-.7-.4-.9-.6-.3-.3-.5-.6-.6-.9-.1-.4-.2-.8-.2-1.2 0-.4.1-.8.2-1.2.1-.4.3-.7.6-.9.3-.3.6-.5.9-.6.3-.1.7-.2 1.1-.2.4 0 .8.1 1.2.2.3.1.6.3.8.6.2.3.4.5.5.9.2.3.3.6.3 1zm-.8-.2c0-.5-.2-1-.5-1.3-.3-.3-.8-.5-1.3-.5-.3 0-.5 0-.8.2-.3 0-.5.1-.7.3s-.3.4-.4.6c-.1.2-.2.4-.2.7h3.9zm2.5-1.8v-.6h.8v1c.2-.3.4-.6.7-.8.3-.2.7-.3 1.1-.3h.6l-.1.8h-.5c-.2 0-.4 0-.6.1s-.5.1-.6.3c-.1.2-.3.4-.4.7s-.1.6-.1 1v2.9h-.8V8.1c-.1-.1-.1-.3-.1-.6zm8.4-2.8c0 .2-.1.3-.2.4-.1.1-.3.2-.4.2s-.3-.1-.4-.2c-.1-.1-.2-.2-.2-.4s.1-.3.2-.4c.1-.1.3-.2.4-.2s.3.1.4.2c.1.1.2.3.2.4zm-.2 7.8h-.8V6.9h.8v5.6zm2.9-5.6v1c.2-.3.4-.6.8-.8s.7-.3 1.1-.3c.7 0 1.2.2 1.6.6.4.4.5 1 .5 1.7v3.4h-.8V9.4c0-.3 0-.6-.1-.8s0-.5-.1-.6c-.1-.2-.3-.3-.5-.4-.2-.1-.4-.1-.7-.1-.2 0-.4 0-.6.1-.2.1-.4.2-.5.4s-.3.4-.4.7c-.1.3-.1.6-.1 1v2.9h-.8V6.9h.6zm10.3 1.3c-.1-.2-.3-.4-.6-.5-.3-.1-.5-.2-.8-.2-.3 0-.6.1-.9.2-.3.1-.5.3-.7.5-.2.2-.3.4-.4.7-.1.3-.1.6-.1.9 0 .3 0 .6.1.9.1.3.2.5.4.7.2.2.4.4.7.5.3.1.6.2.9.2.4 0 .7-.1.9-.2s.5-.3.6-.5l.6.5c-.2.3-.5.5-.9.7-.3.2-.8.3-1.3.3s-.9-.1-1.2-.2c-.4-.1-.7-.4-.9-.6-.3-.3-.5-.6-.6-.9-.1-.4-.2-.8-.2-1.2 0-.4.1-.8.2-1.2.1-.4.3-.7.6-.9s.6-.5.9-.6c.4-.1.8-.2 1.2-.2.4 0 .8.1 1.1.2.4.2.7.4.9.7l-.5.2zm1.9-.7v-.6h.8v1c.2-.3.4-.6.7-.8.3-.2.7-.3 1.1-.3h.6l-.1.8h-.5c-.2 0-.4 0-.6.1s-.4.2-.5.4c-.1.2-.3.4-.4.7s-.1.6-.1 1v2.9h-.8V8.1c-.2-.1-.2-.3-.2-.6zm9.3 2v.4h-4.7c0 .3.1.5.2.8.1.2.2.5.4.6.2.2.4.3.6.4.2.1.5.2.8.2.4 0 .8-.1 1.1-.3s.5-.4.7-.7l.6.5c-.3.4-.7.7-1.1.9-.4.2-.8.3-1.3.3-.4 0-.8-.1-1.2-.2-.4-.1-.7-.4-.9-.6-.3-.3-.5-.6-.6-.9-.1-.4-.2-.8-.2-1.2 0-.4.1-.8.2-1.2.1-.4.3-.7.6-.9.3-.3.6-.5.9-.6.3-.1.7-.2 1.1-.2.4 0 .8.1 1.2.2.3.1.6.3.8.6.2.3.4.5.5.9.2.3.3.6.3 1zm-.9-.2c0-.5-.2-1-.5-1.3-.3-.3-.8-.5-1.3-.5-.3 0-.5 0-.8.2-.2.1-.4.2-.6.4s-.3.4-.4.6c-.1.2-.2.4-.2.7h3.8zm4.1-2.3c.3-.2.7-.3 1.1-.3h.5c.2 0 .3.1.5.2s.3.2.4.4c.1.2.2.3.3.6.2-.4.5-.7.8-.9s.7-.3 1.2-.3c.7 0 1.2.2 1.6.6.4.4.5 1 .5 1.7v3.4h-.8v-3c0-.6-.1-1.1-.3-1.4s-.6-.5-1.1-.5c-.3 0-.5.1-.8.2-.2.1-.4.3-.5.5s-.2.4-.3.7c-.1.2-.1.5-.1.8v3h-.8V9.2c0-.3 0-.5-.1-.7 0-.2-.1-.4-.2-.6-.1-.2-.2-.3-.4-.4s-.4-.1-.7-.1c-.2 0-.4 0-.6.1-.2.1-.4.2-.5.4s-.3.4-.4.7c-.1.3-.1.6-.1 1v2.9h-.8V6.9h.8v1c.3-.4.5-.7.8-.9zm14.2 2.5v.4h-4.7c0 .3.1.5.2.8.1.2.2.5.4.6.2.2.4.3.6.4.2.1.5.2.8.2.4 0 .8-.1 1.1-.3s.5-.4.7-.7l.6.5c-.3.4-.7.7-1.1.9-.4.2-.8.3-1.3.3-.4 0-.8-.1-1.2-.2-.4-.1-.7-.4-.9-.6-.3-.3-.5-.6-.6-.9-.1-.4-.2-.8-.2-1.2 0-.4.1-.8.2-1.2.1-.4.3-.7.6-.9.3-.3.6-.5.9-.6.3-.1.7-.2 1.1-.2.4 0 .8.1 1.2.2.3.1.6.3.8.6.2.3.4.5.5.9.3.3.3.6.3 1zm-.8-.2c0-.5-.2-1-.5-1.3-.3-.3-.8-.5-1.3-.5-.3 0-.5 0-.8.2-.2.1-.4.2-.6.4s-.3.4-.4.6c-.1.2-.2.4-.2.7h3.8zm3.3-2.4v1c.2-.3.4-.6.8-.8s.7-.3 1.1-.3c.7 0 1.2.2 1.6.6.4.4.5 1 .5 1.7v3.4h-.8V9.4c0-.3 0-.6-.1-.8s-.1-.4-.2-.6c-.1-.2-.3-.3-.5-.4-.2-.1-.4-.1-.7-.1-.2 0-.4 0-.6.1-.2.1-.4.2-.5.4s-.3.4-.4.7c-.1.3-.1.6-.1 1v2.9h-.8V6.9h.7zm8.8.7h-1.6v3.3c0 .2 0 .4.1.5 0 .1.1.2.2.3.1.1.2.1.3.2h.7c.2 0 .2-.1.4-.1v.7c-.1.1-.3.1-.5.1h-.5c-.2 0-.3 0-.5-.1s-.3-.1-.5-.2c-.1-.1-.3-.3-.4-.5-.1-.2-.1-.4-.1-.8V7.6h-1.2v-.7h1.2V5.3h.8v1.6h1.6v.7z"
+        transform="translate(492.5 327.5)"
+      />
+    </g>
+  </g>
+</svg>
+
+In our `Stepper` example, the `span` holding the `currentValue` is the one that
+keeps on changing. On each increment or decrement, React just does a
+`setTextContent` operation on that `span`.
+
+## But why just re-render like a dumbo?
+
+Well because it's fucking simple. It just renders the output based on the state
+and props. Your components remain predictable because nothing else besides props
+and state could affect the output. It provides you with a simple mental model.
+You tell React how the component should look based on it pros and state and
+React manages the rest to make it possible.
+
+The only thing React needs to manage well is the way it comes up with the
+minimal number of DOM operations needed to update a component. And I think the
+React engineers have done an amazing job with it.
+
+## Fin.
+
+To end I would like to advice you to remember that React is not about Virtual
+DOM or DOM diffing, but it is about the way it makes you think about apps as you
+write them. You will think of keeping them simple, composable and reusable. We
+will see these in action soon in a follow-up article about the philosohpy behind
+React.
