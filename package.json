@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@silvenon/remark-smartypants": "^1.0.0",
+    "colorthief": "^2.3.2",
     "gray-matter": "^4.0.2",
     "next": "10.0.9",
     "next-mdx-remote": "^2.1.3",

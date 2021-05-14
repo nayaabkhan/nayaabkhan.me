@@ -1,6 +1,7 @@
 import * as path from 'path'
 import Head from 'next/head'
 import Image from 'next/image'
+import ColorThief from 'colorthief'
 import Container from '../src/components/Container'
 import { getPortfolioFilePaths } from '../utils/portfolio'
 
@@ -29,10 +30,15 @@ export default function Portfolio({ portfolioImages }) {
               padding: 0,
               borderRadius: '21px',
               overflow: 'hidden',
-              border: '1px solid hsl(0 0% 95%)',
+              border: `1px solid ${image.color}`,
             }}
           >
-            <Image src={image} width={400} height={400} layout="responsive" />
+            <Image
+              src={image.path}
+              width={400}
+              height={400}
+              layout="responsive"
+            />
           </li>
         ))}
       </ul>
@@ -40,10 +46,22 @@ export default function Portfolio({ portfolioImages }) {
   )
 }
 
-export function getStaticProps() {
-  const portfolioImages = getPortfolioFilePaths().map((filePath) => {
-    return path.join('/', 'portfolio', filePath)
+export async function getStaticProps() {
+  const portfolioImages = getPortfolioFilePaths().map(async (filePath) => {
+    const imagePath = path.resolve(
+      process.cwd(),
+      'public',
+      'portfolio',
+      filePath
+    )
+
+    const color = await ColorThief.getColor(imagePath)
+
+    return {
+      color: `rgb(${color.join(',')})`,
+      path: path.join('/', 'portfolio', filePath),
+    }
   })
 
-  return { props: { portfolioImages } }
+  return { props: { portfolioImages: await Promise.all(portfolioImages) } }
 }
