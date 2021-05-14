@@ -14,7 +14,9 @@ function NavLink(props: React.HTMLProps<HTMLAnchorElement>) {
       <a
         style={{
           padding: 'var(--space-xxs) var(--space-normal)',
-          color: isActive ? 'hsl(var(--palette-primary-50))' : 'inherit',
+          color: isActive
+            ? 'hsl(var(--palette-primary-50))'
+            : 'hsl(var(--palette-text-50))',
           ...style,
         }}
         {...deferred}

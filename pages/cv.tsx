@@ -75,7 +75,7 @@ export default function Home() {
               fontWeight: 'normal',
               wordBreak: 'keep-all',
               fontSize: 'var(--text-s)',
-              color: 'hsl(0 0% 50%)',
+              color: 'hsl(var(--palette-text-50))',
             }}
           >
             (2014—present)
@@ -128,7 +128,7 @@ export default function Home() {
               fontWeight: 'normal',
               wordBreak: 'keep-all',
               fontSize: 'var(--text-s)',
-              color: 'hsl(0 0% 50%)',
+              color: 'hsl(var(--palette-text-50))',
             }}
           >
             (2013—2014)
@@ -174,7 +174,7 @@ export default function Home() {
               fontWeight: 'normal',
               wordBreak: 'keep-all',
               fontSize: 'var(--text-s)',
-              color: 'hsl(0 0% 50%)',
+              color: 'hsl(var(--palette-text-50))',
             }}
           >
             (2012—2013)
@@ -214,7 +214,7 @@ export default function Home() {
               fontWeight: 'normal',
               wordBreak: 'keep-all',
               fontSize: 'var(--text-s)',
-              color: 'hsl(0 0% 50%)',
+              color: 'hsl(var(--palette-text-50))',
             }}
           >
             (2009—2011)
@@ -252,7 +252,7 @@ export default function Home() {
               fontWeight: 'normal',
               wordBreak: 'keep-all',
               fontSize: 'var(--text-s)',
-              color: 'hsl(0 0% 50%)',
+              color: 'hsl(var(--palette-text-50))',
             }}
           >
             (2009—2012)
@@ -274,7 +274,7 @@ export default function Home() {
               fontWeight: 'normal',
               wordBreak: 'keep-all',
               fontSize: 'var(--text-s)',
-              color: 'hsl(0 0% 50%)',
+              color: 'hsl(var(--palette-text-50))',
             }}
           >
             (2006—2009)

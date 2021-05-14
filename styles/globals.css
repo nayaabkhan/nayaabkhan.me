@@ -11,6 +11,7 @@
 
   --base-primary: var(--hue-primary), 64%;
   --base-accent: var(--hue-accent), 90%;
+  --base-text: 0, 0%;
 
   --palette-primary-10: var(--base-primary), 10%;
   --palette-primary-20: var(--base-primary), 20%;
@@ -29,6 +30,16 @@
   --palette-accent-70: var(--base-accent), 70%;
   --palette-accent-80: var(--base-accent), 80%;
   --palette-accent-90: var(--base-accent), 90%;
+
+  --palette-text-10: var(--base-text), 0%;
+  --palette-text-20: var(--base-text), 10%;
+  --palette-text-30: var(--base-text), 20%;
+  --palette-text-40: var(--base-text), 30%;
+  --palette-text-50: var(--base-text), 40%;
+  --palette-text-60: var(--base-text), 50%;
+  --palette-text-70: var(--base-text), 60%;
+  --palette-text-80: var(--base-text), 70%;
+  --palette-text-90: var(--base-text), 80%;
 
   --palette-bg: var(--palette-primary-30);
 
@@ -65,7 +76,7 @@
 body {
   padding: 0;
   margin: 0;
-  color: hsl(0 0% 30%);
+  color: hsl(var(--palette-text-20));
   font-family: var(--font-text);
 }
 
