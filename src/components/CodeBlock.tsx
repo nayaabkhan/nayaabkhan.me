@@ -22,7 +22,7 @@ var theme: PrismTheme = {
     {
       types: ['inserted', 'attr-name'],
       style: {
-        color: 'hsl(var(--palette-accent-50))',
+        color: 'hsl(330, 90%, 50%)',
       },
     },
     {
@@ -34,7 +34,7 @@ var theme: PrismTheme = {
     {
       types: ['string', 'builtin', 'char', 'constant', 'url'],
       style: {
-        color: 'hsl(var(--palette-accent-50))',
+        color: 'hsl(330, 90%, 50%)',
       },
     },
     {
@@ -52,7 +52,7 @@ var theme: PrismTheme = {
     {
       types: ['punctuation'],
       style: {
-        color: 'hsl(var(--palette-primary-50))',
+        color: 'hsl(231, 64%, 50%)',
       },
     },
     {
@@ -70,14 +70,14 @@ var theme: PrismTheme = {
     {
       types: ['tag'],
       style: {
-        color: 'hsl(var(--palette-primary-50))',
+        color: 'hsl(231, 64%, 50%)',
         fontWeight: '500',
       },
     },
     {
       types: ['operator', 'property', 'keyword', 'namespace'],
       style: {
-        color: 'hsl(var(--palette-primary-50))',
+        color: 'hsl(231, 64%, 50%)',
       },
     },
     {
@@ -128,7 +128,6 @@ export default function CodeBlock({ children, className, metastring }) {
               style = {
                 ...style,
                 backgroundColor: 'hsl(251, 20%, 93%)',
-                boxShadow: 'inset 3px 0 hsl(var(--palette-primary-50))',
               }
             }
 

@@ -1,188 +1,100 @@
-* {
-  box-sizing: border-box;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  :root {
+    font-size: clamp(1em, 0.333vw + 0.9em, 1.5em);
+  }
+
+  a {
+    @apply text-primary-500;
+  }
+
+  :is(h1, h2, h3, h4, h5, h6) {
+    @apply font-bold mt-5 mb-3;
+    line-height: 1;
+  }
+
+  :is(h1, h2, h3, h4, h5, h6) + :is(h1, h2, h3, h4, h5, h6) {
+    @apply mt-3;
+  }
+
+  h1 {
+    @apply text-shadow text-4xl;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-lg;
+  }
+
+  article :is(h2, h3, h4, h5, h6) {
+    @apply text-primary-600;
+  }
+
+  p {
+    @apply my-4;
+  }
+
+  em {
+    @apply text-accent-500 font-em not-italic tracking-tight;
+  }
+
+  pre,
+  code {
+    @apply font-mono font-normal;
+    font-size: 0.8rem;
+  }
+
+  pre {
+    @apply -mx-4 my-4 p-0 overflow-x-auto rounded-lg bg-primary-100;
+  }
+
+  * > code {
+    @apply py-1 px-2 rounded-sm bg-primary-100;
+  }
+
+  blockquote {
+    @apply relative m-0 p-4 rounded-lg overflow-hidden bg-primary-100;
+  }
+
+  .post ul {
+    @apply my-4;
+  }
+
+  .post li {
+    @apply relative pl-4 my-2;
+  }
+
+  .post li::before {
+    content: '•';
+    @apply absolute text-primary-200 left-1;
+  }
 }
 
-:root {
-  /* Colors */
-  --hue-primary: 231;
-  --hue-accent: 330;
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 3px 0 hsla(0, 0%, 60%, 24%);
+  }
 
-  --base-primary: var(--hue-primary), 64%;
-  --base-accent: var(--hue-accent), 90%;
-  --base-text: 0, 0%;
-
-  --palette-primary-10: var(--base-primary), 10%;
-  --palette-primary-20: var(--base-primary), 20%;
-  --palette-primary-30: var(--base-primary), 30%;
-  --palette-primary-40: var(--base-primary), 40%;
-  --palette-primary-50: var(--base-primary), 50%;
-  --palette-primary-70: var(--base-primary), 70%;
-  --palette-primary-80: var(--base-primary), 80%;
-  --palette-primary-90: var(--base-primary), 90%;
-
-  --palette-accent-10: var(--base-accent), 10%;
-  --palette-accent-20: var(--base-accent), 20%;
-  --palette-accent-30: var(--base-accent), 30%;
-  --palette-accent-40: var(--base-accent), 40%;
-  --palette-accent-50: var(--base-accent), 50%;
-  --palette-accent-70: var(--base-accent), 70%;
-  --palette-accent-80: var(--base-accent), 80%;
-  --palette-accent-90: var(--base-accent), 90%;
-
-  --palette-text-10: var(--base-text), 0%;
-  --palette-text-20: var(--base-text), 10%;
-  --palette-text-30: var(--base-text), 20%;
-  --palette-text-40: var(--base-text), 30%;
-  --palette-text-50: var(--base-text), 40%;
-  --palette-text-60: var(--base-text), 50%;
-  --palette-text-70: var(--base-text), 60%;
-  --palette-text-80: var(--base-text), 70%;
-  --palette-text-90: var(--base-text), 80%;
-
-  --palette-bg: var(--palette-primary-30);
-
-  /* Type faces */
-  --font-text: Satoshi, -apple-system, Roboto, Fira Sans, sans-serif;
-  --font-accent: Kalam, cursive;
-  --font-mono: 'DM Mono', monospace;
-
-  /* Font sizes */
-  --text-xxxl: 8rem;
-  --text-xxl: 4rem;
-  --text-xl: 2.2rem;
-  --text-l: 1.5rem;
-  --text-base: 1rem;
-  --text-s: 0.8rem;
-  --text-xs: 0.7rem;
-
-  /* Spacings */
-  --space-xxs: 0.125rem;
-  --space-xs: 0.25rem;
-  --space-s: 0.5rem;
-  --space-normal: 1rem;
-  --space-l: 2rem;
-  --space-xl: 4rem;
-
-  /* Easing curves */
-  --ease-out-back: cubic-bezier(0.32, 1.25, 0.64, 1);
-  --ease-in-back: cubic-bezier(0.36, 0, 0.75, -0.4);
-
-  /* Responsive font sizing */
-  font-size: clamp(1em, 0.333vw + 0.9em, 1.5em);
+  .container {
+    @apply mx-auto px-4;
+    width: clamp(320px, 95vw, 60ch);
+  }
 }
 
-body {
-  padding: 0;
-  margin: 0;
-  color: hsl(var(--palette-text-20));
-  font-family: var(--font-text);
-}
-
-a {
-  display: inline-block;
-  position: relative;
-  text-decoration: none;
-  color: hsl(var(--palette-primary-50));
-}
-
-:is(h1, h2, h3, h4, h5, h6) {
-  color: black;
-  line-height: 1;
-  margin-block-start: var(--space-l);
-  margin-block-end: var(--space-normal);
-}
-
-:is(h1, h2, h3, h4, h5, h6) + :is(h1, h2, h3, h4, h5, h6) {
-  margin-block-start: var(--space-normal);
-}
-
-h1 {
-  font-size: var(--text-xl);
-  /* margin: var(--space-normal) 0; */
-  text-shadow: 0px 3px 0 hsla(0, 0%, 60%, 24%);
-}
-
-h2 {
-  font-size: var(--text-l);
-}
-
-h3 {
-  font-size: var(--text-base);
-}
-
-article :is(h2, h3, h4, h5, h6) {
-  color: hsl(var(--palette-primary-40));
-}
-
-em {
-  color: hsl(var(--palette-accent-50));
-  font-family: var(--font-accent);
-  font-style: normal;
-  letter-spacing: -0.5px;
-}
-
-pre,
-code {
-  font-size: var(--text-s);
-  font-family: var(--font-mono);
-  font-weight: 400;
-}
-
-pre {
-  margin: 0 calc(-1 * var(--space-normal));
-  padding: 0;
-  overflow-x: auto;
-  border-radius: 8px;
-  background-color: hsl(var(--hue-primary), 27%, 97%);
-}
-
-* > code {
-  padding: 1px 6px;
-  border-radius: 3px;
-  background-color: hsla(0, 0%, 70%, 20%);
-}
-
-blockquote {
-  position: relative;
-  margin: 0;
-  padding: var(--space-normal);
-  background-color: hsla(var(--palette-primary-90), 50%);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-blockquote > p {
-  margin: 0;
-}
-
-ol,
-ul {
-  padding: 0 var(--space-normal) var(--space-normal);
-  margin: var(--space-l) 0;
-}
-
-ul {
-  list-style-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M6.09 1.445c-1.68 0-4.421.699-4.421 4.358 0 3.02 3.383 3.43 4.95 2.585 2.472-1.33 2.855-7.472-1.992-5.73' stroke='%233B3D40' stroke-width='2' fill='none' fill-rule='evenodd' stroke-linecap='round'/%3E%3C/svg%3E");
-}
-
-li {
-  padding-left: var(--space-s);
-}
-
-hr {
-  width: 10ch;
-  height: 4px;
-  background-color: hsla(0, 0%, 70%, 20%);
-  background-repeat: no-repeat;
-  background-size: 100% auto;
-  border: none;
-  border-radius: 9999px;
-}
-
-@keyframes blinker {
-  50% {
-    opacity: 0;
+@layer components {
+  .header {
+    @apply sticky top-0 z-50 backdrop-filter backdrop-blur-sm backdrop-saturate-150 bg-white bg-opacity-90;
+    box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
   }
 }

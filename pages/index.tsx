@@ -5,14 +5,14 @@ import Container from '../src/components/Container'
 
 export default function Home() {
   return (
-    <Container blockSpacing="var(--space-xl)">
+    <Container className="my-6">
       <Head>
         <title>Nayaab Khan | Designer | Developer</title>
       </Head>
-      <h1 style={{ fontSize: 'var(--text-xxl)', textAlign: 'center' }}>
+      <h1 className="my-6 text-shadow text-6xl font-bold text-center">
         Hi, I’m Nayaab!
       </h1>
-      <div style={{ columnCount: 2 }}>
+      <div>
         <p>
           I’m a happy generalist—a delectable blend of a visual designer,
           programmer, project manager, product thinker, and more. It helps me

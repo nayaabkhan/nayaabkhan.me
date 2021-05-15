@@ -7,55 +7,29 @@ import matter from 'gray-matter'
 import smartypants from '@silvenon/remark-smartypants'
 import Container from '../../src/components/Container'
 import { getPostFilePaths } from '../../utils/posts'
+import HR from '../../src/components/HR'
 
 export default function BlogPost({ frontmatter, post }) {
   const content = hydrate(post)
   return (
-    <article style={{ display: 'flex', flexDirection: 'column' }}>
+    <article className="flex flex-col post">
       <Head>
         <title>{frontmatter.title} | Nayaab Khan</title>
       </Head>
-      <header
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          margin: 'var(--space-xl) 0',
-          textAlign: 'center',
-        }}
-      >
+      <header className="flex flex-col items-start my-6 mx-0 text-center">
         <Container>
           <a
             href="#"
-            style={{
-              textTransform: 'uppercase',
-              fontSize: 'var(--text-xs)',
-              backgroundColor: 'hsl(var(--palette-primary-50))',
-              padding: '0 var(--space-s)',
-              color: 'white',
-              borderRadius: '9999px',
-              fontWeight: 900,
-              boxShadow: '0 3px 2px -1px hsla(var(--palette-primary-30), 30%)',
-            }}
+            className="inline-block uppercase bg-primary-500 text-xs px-3 py-0 text-white rounded-full shadow-hard font-bold"
           >
             {frontmatter.hashtags[0]}
           </a>
-          <h1>{frontmatter.title}</h1>
-          <small
-            style={{
-              fontSize: 'var(--text-xs)',
-              letterSpacing: '2px',
-              textTransform: 'uppercase',
-            }}
-          >
+          <h1 className="text-4xl mt-5 mb-4">{frontmatter.title}</h1>
+          <small className="text-xs tracking-widest uppercase">
             {frontmatter.date}
           </small>
         </Container>
-        <hr
-          style={{
-            marginTop: 'var(--space-l)',
-          }}
-        />
+        <HR className="mt-4" />
       </header>
       <main>
         <Container>{content}</Container>

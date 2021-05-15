@@ -19,17 +19,9 @@ export default function Meditations({ meditations }) {
         ></link>
       </Head>
 
-      <Container blockSpacing="var(--space-xl)">
-        <h1>Meditations</h1>
-        <ul
-          style={{
-            listStyle: 'none',
-            padding: 0,
-            fontFamily: 'La Belle Aurore, cursive',
-            fontSize: '1.2rem',
-            color: 'hsl(var(--palette-primary-30))',
-          }}
-        >
+      <Container className="my-6">
+        <h1 className="mb-5">Meditations</h1>
+        <ul className="font-script text-primary-600 text-xl">
           {meditations
             .sort((a, b) => {
               return (
@@ -38,17 +30,9 @@ export default function Meditations({ meditations }) {
               )
             })
             .map((meditation, index) => (
-              <li
-                key={meditation.slug}
-                style={{ marginBottom: 'var(--space-l)', padding: 0 }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <small
-                    style={{
-                      borderBottom: '1px solid hsl(var(--palette-accent-80))',
-                      marginBottom: '-0.5rem',
-                    }}
-                  >
+              <li key={meditation.slug} className="mb-5">
+                <div className="flex flex-col">
+                  <small className="border-b border-accent-200 -mb-3">
                     #{meditations.length - index} {meditation.frontmatter.date}
                   </small>
                   {hydrate(meditation.post)}

@@ -1,31 +1,16 @@
 import Container from './Container'
+import HR from './HR'
 
 export default function Footer() {
   return (
-    <footer
-      style={{
-        marginTop: 'auto',
-      }}
-    >
-      <hr
-        style={{
-          marginTop: 'var(--space-l)',
-        }}
-      />
-      <Container blockSpacing="var(--space-l)">
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <strong>
-            <em>Have a nice day!</em>
+    <footer className="mt-auto">
+      <HR className="mt-5" />
+      <Container className="my-5">
+        <div className="flex flex-col items-center">
+          <strong className="font-em text-accent-500 tracking-tight">
+            Have a nice day!
           </strong>
-          <span style={{ fontSize: 'var(--text-xs)' }}>
-            &copy; Nayaabkhan Khan
-          </span>
+          <span className="text-xs">&copy; Nayaabkhan Khan</span>
         </div>
       </Container>
     </footer>
