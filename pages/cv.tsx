@@ -2,7 +2,6 @@ import * as React from 'react'
 import Head from 'next/head'
 import Container from '../src/components/Container'
 import useInterval from '../src/hooks/useInterval'
-import HR from '../src/components/HR'
 
 export default function Home() {
   const [hour, setHour] = React.useState('')
