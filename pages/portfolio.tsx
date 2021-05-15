@@ -7,30 +7,18 @@ import { getPortfolioFilePaths } from '../utils/portfolio'
 
 export default function Portfolio({ portfolioImages }) {
   return (
-    <Container blockSpacing="var(--space-xl)">
+    <Container className="my-6">
       <Head>
         <title>Portfolio | Nayaab Khan</title>
       </Head>
-      <h1>Portfolio</h1>
-      <ul
-        style={{
-          listStyle: 'none',
-          padding: 0,
-          fontFamily: 'La Belle Aurore, cursive',
-          fontSize: '1.2rem',
-          color: 'hsl(var(--palette-primary-30))',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-          gridGap: 'var(--space-normal)',
-        }}
-      >
-        {portfolioImages.map((image) => (
+      <h1 className="mb-5">Portfolio</h1>
+      <ul className="grid grid-cols-repeat-auto-fill gap-4 ">
+        {portfolioImages.map((image, i) => (
           <li
+            key={i}
+            className="rounded-3xl overflow-hidden border"
             style={{
-              padding: 0,
-              borderRadius: '21px',
-              overflow: 'hidden',
-              border: `1px solid ${image.color}`,
+              borderColor: image.color,
             }}
           >
             <Image

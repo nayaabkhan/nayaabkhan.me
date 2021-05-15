@@ -5,81 +5,39 @@ import Container from './Container'
 
 function NavLink(props: React.HTMLProps<HTMLAnchorElement>) {
   const router = useRouter()
-  const { href, style, ...deferred } = props
+  const { className = '', href, ...deferred } = props
 
   const isActive =
     href === '/' ? router.pathname === href : router.pathname.startsWith(href)
 
+  const linkColor = isActive ? 'text-primary-500' : 'text-gray-500'
+
   return (
     <Link href={href}>
-      <a
-        style={{
-          padding: 'var(--space-xxs) var(--space-normal)',
-          color: isActive
-            ? 'hsl(var(--palette-primary-50))'
-            : 'hsl(var(--palette-text-50))',
-          ...style,
-        }}
-        {...deferred}
-      />
+      <a className={`text-xs flex ${linkColor} ${className}`} {...deferred} />
     </Link>
   )
 }
 
-function NavLinkItem(props: React.HTMLProps<HTMLLIElement>) {
-  const { style, ...deferred } = props
-
-  return <li style={{ padding: 0, ...style }} {...deferred} />
-}
-
 function HeaderSection(props: React.HTMLProps<HTMLDivElement>) {
-  const { style, ...deferred } = props
+  const { className = '', ...deferred } = props
 
   return (
-    <div
-      style={{
-        flex: '1 1',
-        display: 'flex',
-        alignItems: 'center',
-        fontSize: 'var(--text-s)',
-        ...style,
-      }}
-      {...deferred}
-    />
+    <div className={`flex flex-1 items-center ${className}`} {...deferred} />
   )
 }
 
 export default function Header(props: React.HTMLProps<HTMLElement>) {
   return (
-    <header
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 99,
-        backgroundColor: 'hsla(0,0%,100%,0.8)',
-        backdropFilter: 'saturate(180%) blur(5px)',
-        WebkitBackdropFilter: 'saturate(180%) blur(5px)',
-        boxShadow: 'inset 0 -1px 0 0 rgba(0,0,0,0.1)',
-      }}
-    >
-      <Container
-        blockSpacing="var(--space-normal)"
-        style={{ display: 'flex', alignItems: 'center' }}
-      >
+    <header className="header">
+      <Container className="flex items-center py-4">
         <HeaderSection>
-          <NavLink
-            href="/"
-            style={{
-              display: 'block',
-              padding:
-                'calc(var(--space-s) * -1) calc(var(--space-normal) * -1)',
-            }}
-          >
+          <NavLink href="/" className="block">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="1.4rem"
               viewBox="0 0 45 45"
-              style={{ display: 'block' }}
+              className="block"
             >
               <g fill="currentColor" fill-rule="nonzero">
                 <path d="M2.5 8.998v27.004A6.501 6.501 0 008.998 42.5h27.004a6.501 6.501 0 006.498-6.498V8.998A6.501 6.501 0 0036.002 2.5H8.998A6.501 6.501 0 002.5 8.998zm-2.5 0C0 4.028 4.033 0 8.998 0h27.004C40.972 0 45 4.033 45 8.998v27.004C45 40.972 40.967 45 36.002 45H8.998C4.028 45 0 40.967 0 36.002V8.998z" />
@@ -90,41 +48,32 @@ export default function Header(props: React.HTMLProps<HTMLElement>) {
         </HeaderSection>
         <HeaderSection>
           <nav role="nav">
-            <ul
-              style={{
-                listStyle: 'none',
-                margin: '0 calc(-1 * var(--space-normal))',
-                padding: 0,
-                listStyleType: 'none',
-                display: 'flex',
-              }}
-            >
-              <NavLinkItem>
-                <NavLink href="/blog">Blog</NavLink>
-              </NavLinkItem>
-              <NavLinkItem>
-                <NavLink href="/portfolio">Portfolio</NavLink>
-              </NavLinkItem>
-              <NavLinkItem>
-                <NavLink href="/meditations">Meditations</NavLink>
-              </NavLinkItem>
+            <ul className="-mx-4 my-0 flex">
+              <li>
+                <NavLink className="py-1 px-4" href="/blog">
+                  Blog
+                </NavLink>
+              </li>
+              <li>
+                <NavLink className="py-1 px-4" href="/portfolio">
+                  Portfolio
+                </NavLink>
+              </li>
+              <li>
+                <NavLink className="py-1 px-4" href="/meditations">
+                  Meditations
+                </NavLink>
+              </li>
             </ul>
           </nav>
         </HeaderSection>
         <HeaderSection>
-          <ul
-            style={{
-              listStyle: 'none',
-              margin: '0 calc(-1 * var(--space-normal))',
-              padding: 0,
-              listStyleType: 'none',
-              display: 'flex',
-              marginLeft: 'auto',
-            }}
-          >
-            <NavLinkItem>
-              <NavLink href="/cv">CV</NavLink>
-            </NavLinkItem>
+          <ul className="-mx-4 my-0 flex ml-auto">
+            <li>
+              <NavLink className="py-1 px-4" href="/cv">
+                CV
+              </NavLink>
+            </li>
           </ul>
         </HeaderSection>
       </Container>

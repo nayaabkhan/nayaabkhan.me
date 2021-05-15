@@ -8,27 +8,18 @@ import Container from '../../src/components/Container'
 
 export default function BlogListing({ posts }) {
   return (
-    <Container blockSpacing="var(--space-xl)">
+    <Container className="my-6">
       <Head>
         <title>Blog | Nayaab Khan</title>
       </Head>
-      <h1>Articles</h1>
-      <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+      <h1 className="mb-4">Articles</h1>
+      <ul>
         {posts.map((post) => (
-          <li
-            key={post.slug}
-            style={{ marginBottom: 'var(--space-normal)', padding: 0 }}
-          >
+          <li key={post.slug} className="mb-4">
             <Link as={`/blog/${post.slug}`} href={`/blog/[slug]`}>
-              <a style={{ display: 'flex', flexDirection: 'column' }}>
+              <a className="flex flex-col">
                 <span>{post.frontmatter.title}</span>
-                <small
-                  style={{
-                    color: 'hsla(0,0%,0%,0.5)',
-                    fontSize: 'var(--text-s)',
-                    textTransform: 'uppercase',
-                  }}
-                >
+                <small className="text-xs uppercase text-gray-500">
                   {post.frontmatter.date}
                 </small>
               </a>

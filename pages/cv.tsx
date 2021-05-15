@@ -2,6 +2,7 @@ import * as React from 'react'
 import Head from 'next/head'
 import Container from '../src/components/Container'
 import useInterval from '../src/hooks/useInterval'
+import HR from '../src/components/HR'
 
 export default function Home() {
   const [hour, setHour] = React.useState('')
@@ -24,12 +25,12 @@ export default function Home() {
   }, 1000)
 
   return (
-    <Container blockSpacing="var(--space-xl)">
+    <Container className="py-5">
       <Head>
         <title>CV | Nayaab Khan</title>
       </Head>
       <header>
-        <h1 style={{ fontSize: 'var(--text-xl)' }}>Nayaab Khan</h1>
+        <h1 className="text-4xl">Nayaab Khan</h1>
         <h2>Senior Front-end Developer and UI Designer</h2>
 
         <p>
@@ -39,7 +40,7 @@ export default function Home() {
         </p>
       </header>
 
-      <main>
+      <main className="post">
         <h3>Skills</h3>
         <p>
           I am skilled in many trades, but I stick to the following.{' '}
@@ -61,29 +62,13 @@ export default function Home() {
         </ul>
 
         <h3>Experience</h3>
-        <h4
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: 'var(--text-l)',
-            marginBottom: 'var(--space-s)',
-          }}
-        >
+        <h4 className="flex justify-between text-2xl mb-1">
           StarOfService.com, France
-          <small
-            style={{
-              fontWeight: 'normal',
-              wordBreak: 'keep-all',
-              fontSize: 'var(--text-s)',
-              color: 'hsl(var(--palette-text-50))',
-            }}
-          >
+          <small className="font-normal text-xs text-gray-500">
             (2014—present)
           </small>
         </h4>
-        <em style={{ lineHeight: 1 }}>
-          Full Stack Programmer, Designer, Front-end Lead, Process Master
-        </em>
+        <em>Full Stack Programmer, Designer, Front-end Lead, Process Master</em>
 
         <p>
           Joined as the only developer in the company responsible for developing
@@ -114,29 +99,13 @@ export default function Home() {
           </li>
         </ul>
 
-        <h4
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: 'var(--text-l)',
-            marginBottom: 'var(--space-s)',
-          }}
-        >
+        <h4 className="flex justify-between text-2xl mb-1">
           Fireworks LLC
-          <small
-            style={{
-              fontWeight: 'normal',
-              wordBreak: 'keep-all',
-              fontSize: 'var(--text-s)',
-              color: 'hsl(var(--palette-text-50))',
-            }}
-          >
+          <small className="font-normal text-xs text-gray-500">
             (2013—2014)
           </small>
         </h4>
-        <em style={{ lineHeight: 1 }}>
-          Logo Design, Graphic Design, UI Design, Web Development
-        </em>
+        <em>Logo Design, Graphic Design, UI Design, Web Development</em>
 
         <p>
           Worked on varied design projects for several small businesses.
@@ -160,27 +129,13 @@ export default function Home() {
           </li>
         </ul>
 
-        <h4
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: 'var(--text-l)',
-            marginBottom: 'var(--space-s)',
-          }}
-        >
+        <h4 className="flex justify-between text-2xl mb-1">
           Tata Consultancy Services
-          <small
-            style={{
-              fontWeight: 'normal',
-              wordBreak: 'keep-all',
-              fontSize: 'var(--text-s)',
-              color: 'hsl(var(--palette-text-50))',
-            }}
-          >
+          <small className="font-normal text-xs text-gray-500">
             (2012—2013)
           </small>
         </h4>
-        <em style={{ lineHeight: 1 }}>Data Stage, Unix Developer</em>
+        <em>Data Stage, Unix Developer</em>
 
         <p>
           I worked as a developer for the Triple’ A portfolio management tool at
@@ -200,27 +155,13 @@ export default function Home() {
           </li>
         </ul>
 
-        <h4
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: 'var(--text-l)',
-            marginBottom: 'var(--space-s)',
-          }}
-        >
+        <h4 className="flex justify-between text-2xl mb-1">
           techMavins
-          <small
-            style={{
-              fontWeight: 'normal',
-              wordBreak: 'keep-all',
-              fontSize: 'var(--text-s)',
-              color: 'hsl(var(--palette-text-50))',
-            }}
-          >
+          <small className="font-normal text-xs text-gray-500">
             (2009—2011)
           </small>
         </h4>
-        <em style={{ lineHeight: 1 }}>Web Design and Development</em>
+        <em>Web Design and Development</em>
 
         <p>I worked on several projects, from design to deployment.</p>
 
@@ -238,49 +179,21 @@ export default function Home() {
         </ul>
 
         <h3>Education</h3>
-        <h4
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: 'var(--text-l)',
-            marginBottom: 'var(--space-s)',
-          }}
-        >
+        <h4 className="flex justify-between text-2xl mb-1">
           Bachelors of Computer Engineering
-          <small
-            style={{
-              fontWeight: 'normal',
-              wordBreak: 'keep-all',
-              fontSize: 'var(--text-s)',
-              color: 'hsl(var(--palette-text-50))',
-            }}
-          >
+          <small className="font-normal text-xs text-gray-500">
             (2009—2012)
           </small>
         </h4>
-        <em style={{ lineHeight: 1 }}>Gujarat Technological University.</em>
+        <em>Gujarat Technological University.</em>
 
-        <h4
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: 'var(--text-l)',
-            marginBottom: 'var(--space-s)',
-          }}
-        >
+        <h4 className="flex justify-between text-2xl mb-1">
           Diploma in Computer Engineering
-          <small
-            style={{
-              fontWeight: 'normal',
-              wordBreak: 'keep-all',
-              fontSize: 'var(--text-s)',
-              color: 'hsl(var(--palette-text-50))',
-            }}
-          >
+          <small className="font-normal text-xs text-gray-500">
             (2006—2009)
           </small>
         </h4>
-        <em style={{ lineHeight: 1 }}>Technical Education Board.</em>
+        <em>Technical Education Board.</em>
 
         <h3>Hobbies</h3>
         <ul>
@@ -307,8 +220,6 @@ export default function Home() {
           <li>Listen with the intent to understand.</li>
           <li>Do work that makes you happy and do it well.</li>
         </ul>
-
-        <hr />
       </main>
 
       <footer>
@@ -316,10 +227,7 @@ export default function Home() {
           Contact Information{' '}
           <small>
             (It’s{' '}
-            <a
-              href="https://time.is/Vadodara"
-              style={{ fontVariantNumeric: 'tabular-nums' }}
-            >
+            <a href="https://time.is/Vadodara" className="tabular-nums">
               <span>{hour}</span>
               <span style={{ animation: 'blinker 2s step-start infinite' }}>
                 :
