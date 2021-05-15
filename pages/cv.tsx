@@ -63,7 +63,7 @@ export default function Home() {
         <h3>Experience</h3>
         <h4 className="flex justify-between text-2xl mb-1">
           StarOfService.com, France
-          <small className="font-normal text-xs text-gray-500">
+          <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
             (2014—present)
           </small>
         </h4>
@@ -100,7 +100,7 @@ export default function Home() {
 
         <h4 className="flex justify-between text-2xl mb-1">
           Fireworks LLC
-          <small className="font-normal text-xs text-gray-500">
+          <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
             (2013—2014)
           </small>
         </h4>
@@ -130,7 +130,7 @@ export default function Home() {
 
         <h4 className="flex justify-between text-2xl mb-1">
           Tata Consultancy Services
-          <small className="font-normal text-xs text-gray-500">
+          <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
             (2012—2013)
           </small>
         </h4>
@@ -156,7 +156,7 @@ export default function Home() {
 
         <h4 className="flex justify-between text-2xl mb-1">
           techMavins
-          <small className="font-normal text-xs text-gray-500">
+          <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
             (2009—2011)
           </small>
         </h4>
@@ -180,7 +180,7 @@ export default function Home() {
         <h3>Education</h3>
         <h4 className="flex justify-between text-2xl mb-1">
           Bachelors of Computer Engineering
-          <small className="font-normal text-xs text-gray-500">
+          <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
             (2009—2012)
           </small>
         </h4>
@@ -188,7 +188,7 @@ export default function Home() {
 
         <h4 className="flex justify-between text-2xl mb-1">
           Diploma in Computer Engineering
-          <small className="font-normal text-xs text-gray-500">
+          <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
             (2006—2009)
           </small>
         </h4>
