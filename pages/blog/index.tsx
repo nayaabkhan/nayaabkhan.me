@@ -51,8 +51,10 @@ export function getStaticProps() {
       const source = fs.readFileSync(path.join('posts', filePath), 'utf-8')
 
       const { data: frontmatter, excerpt } = matter(source, {
-        excerpt: (file, options) => {
+        excerpt: (file) => {
+          // @ts-ignore
           file.excerpt = file.content.split('\n').slice(0, 5).join(' ').trim()
+          // @ts-ignore
           return file.excerpt
         },
       })
