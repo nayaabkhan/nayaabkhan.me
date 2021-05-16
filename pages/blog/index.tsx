@@ -15,9 +15,9 @@ export default function BlogListing({ posts }) {
       <h1 className="mb-5">Articles</h1>
       <ul>
         {posts.map((post) => (
-          <li key={post.slug} className="mb-5">
+          <li key={post.slug} className="mb-2">
             <Link as={`/blog/${post.slug}`} href={`/blog/[slug]`}>
-              <a className="flex flex-row items-start">
+              <a className="flex flex-row items-start p-4 -mx-4 rounded-lg transition duration-300 ease-in-out hover:bg-gray-100">
                 <img
                   alt="Illustration of the blog post"
                   src={`/posts/${post.slug}.png`}
@@ -30,7 +30,7 @@ export default function BlogListing({ posts }) {
                     {post.frontmatter.title}
                   </span>
                   <p className="text-gray-600 text-sm mt-3">{post.excerpt}…</p>
-                  <span className="text-sm px-3 py-2 -mx-3 hover:bg-primary-100 self-start rounded-lg">
+                  <span className="text-sm px-3 py-2 -mx-3 transition duration-300 ease-in-out bg-transparent hover:bg-primary-600 hover:text-white self-start rounded-md">
                     Read more →
                   </span>
                 </div>
