@@ -12,16 +12,28 @@ export default function BlogListing({ posts }) {
       <Head>
         <title>Blog | Nayaab Khan</title>
       </Head>
-      <h1 className="mb-4">Articles</h1>
+      <h1 className="mb-5">Articles</h1>
       <ul>
         {posts.map((post) => (
-          <li key={post.slug} className="mb-4">
+          <li key={post.slug} className="mb-5">
             <Link as={`/blog/${post.slug}`} href={`/blog/[slug]`}>
-              <a className="flex flex-col">
-                <span>{post.frontmatter.title}</span>
-                <small className="text-xs uppercase text-gray-500">
-                  {post.frontmatter.date}
-                </small>
+              <a className="flex flex-row items-start">
+                <img
+                  alt="Illustration of the blog post"
+                  src={`/posts/${post.slug}.png`}
+                  width="64"
+                  height="64"
+                  className="mr-4"
+                />
+                <div className="flex flex-col">
+                  <span className="font-bold text-lg">
+                    {post.frontmatter.title}
+                  </span>
+                  <p className="text-gray-600 text-sm mt-3">{post.excerpt}…</p>
+                  <span className="text-sm px-3 py-2 -mx-3 hover:bg-primary-100 self-start rounded-lg">
+                    Read more →
+                  </span>
+                </div>
               </a>
             </Link>
           </li>
@@ -38,10 +50,15 @@ export function getStaticProps() {
     .map((filePath) => {
       const source = fs.readFileSync(path.join('posts', filePath), 'utf-8')
 
-      const { data: frontmatter } = matter(source)
+      const { data: frontmatter, excerpt } = matter(source, {
+        excerpt: (file, options) => {
+          file.excerpt = file.content.split('\n').slice(0, 5).join(' ').trim()
+          return file.excerpt
+        },
+      })
       const slug = path.basename(filePath, '.mdx')
 
-      return { slug, frontmatter }
+      return { slug, frontmatter, excerpt }
     })
     .sort((a, b) => {
       return (
