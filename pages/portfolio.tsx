@@ -1,6 +1,5 @@
 import * as path from 'path'
 import Head from 'next/head'
-import Image from 'next/image'
 import ColorThief from 'colorthief'
 import Container from '../src/components/Container'
 import { getPortfolioFilePaths } from '../utils/portfolio'
@@ -21,12 +20,7 @@ export default function Portfolio({ portfolioImages }) {
               borderColor: image.color,
             }}
           >
-            <Image
-              src={image.path}
-              width={400}
-              height={400}
-              layout="responsive"
-            />
+            <img src={image.path} width={400} height={400} />
           </li>
         ))}
       </ul>
