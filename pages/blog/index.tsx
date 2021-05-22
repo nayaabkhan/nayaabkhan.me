@@ -17,7 +17,7 @@ export default function BlogListing({ posts }) {
         {posts.map((post) => (
           <li key={post.slug} className="mb-2">
             <Link as={`/blog/${post.slug}`} href={`/blog/[slug]`}>
-              <a className="flex flex-row items-start p-4 -mx-4 rounded-lg transition duration-300 ease-in-out hover:bg-gray-100">
+              <a className="flex items-start p-4 -mx-4 rounded-lg transition duration-300 ease-in-out hover:bg-gray-100">
                 <img
                   alt="Illustration of the blog post"
                   src={`/posts/${post.slug}.png`}
