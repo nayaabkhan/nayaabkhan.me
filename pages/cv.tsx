@@ -115,7 +115,7 @@ export default function CV() {
         <ul>
           <li>
             Designed the trademark and website of a Texas-based{' '}
-            <a href="http://fridgeresendez.net/">law firm</a>.
+            <a href="https://fridgeresendez.net/">law firm</a>.
           </li>
           <li>
             Designed packaging labels and marketing design for the full cleaning
