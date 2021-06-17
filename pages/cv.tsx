@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Container from '../src/components/Container'
 import useInterval from '../src/hooks/useInterval'
 
-export default function Home() {
+export default function CV() {
   const [hour, setHour] = React.useState('')
   const [minute, setMinute] = React.useState('')
 
