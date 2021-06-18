@@ -16,7 +16,7 @@ export default function Meditations({ meditations }) {
         <link
           href="https://fonts.googleapis.com/css?family=La+Belle+Aurore&display=swap"
           rel="stylesheet"
-        ></link>
+         />
       </Head>
 
       <Container className="my-6">
