@@ -9,10 +9,14 @@ export default function Home() {
       <Head>
         <title>Nayaab Khan | Designer | Developer</title>
       </Head>
-      <h1 className="my-6 text-shadow text-6xl font-bold text-center">
-        Hi, I’m Nayaab!
-      </h1>
-      <div>
+      <header className="flex flex-col items-center">
+        <img src="/me.jpeg" className="rounded-full w-7 shadow-md" />
+        <h1 className="mb-6 text-shadow text-6xl font-bold text-center">
+          Hi, I’m Nayaab!
+        </h1>
+      </header>
+
+      <main>
         <p>
           I’m a happy generalist—a delectable blend of a visual designer,
           programmer, project manager, product thinker, and more. It helps me
@@ -30,7 +34,7 @@ export default function Home() {
           </Link>{' '}
           here.
         </p>
-      </div>
+      </main>
     </Container>
   )
 }
