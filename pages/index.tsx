@@ -1,6 +1,8 @@
 import * as React from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
+
 import Container from '../src/components/Container'
 
 export default function Home() {
@@ -10,7 +12,9 @@ export default function Home() {
         <title>Nayaab Khan | Designer | Developer</title>
       </Head>
       <header className="flex flex-col items-center">
-        <img src="/me.jpeg" className="rounded-full w-7 shadow-md" />
+        <div className="relative rounded-full overflow-hidden w-7 h-7 shadow-md">
+          <Image src="/me.jpeg" layout="fill" />
+        </div>
         <h1 className="mb-6 text-shadow text-6xl font-bold text-center">
           Hi, I’m Nayaab!
         </h1>
