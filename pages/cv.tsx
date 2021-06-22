@@ -40,7 +40,14 @@ export default function CV() {
       </header>
 
       <main className="post">
-        <h3>Skills</h3>
+        <h3 id="skills">
+          <a
+            className="text-black transition-colors hover:text-primary-500"
+            href="#skills"
+          >
+            Skills
+          </a>
+        </h3>
         <p>
           I am skilled in many trades, but I stick to the following.{' '}
           <strong>
@@ -60,9 +67,21 @@ export default function CV() {
           <li>Team leading and building</li>
         </ul>
 
-        <h3>Experience</h3>
-        <h4 className="flex justify-between text-2xl mb-1">
-          StarOfService.com, France
+        <h3 id="experience">
+          <a
+            className="text-black transition-colors hover:text-primary-500"
+            href="#experience"
+          >
+            Experience
+          </a>
+        </h3>
+        <h4 className="flex justify-between text-2xl mb-1" id="sos">
+          <a
+            className="text-black transition-colors hover:text-primary-500"
+            href="#sos"
+          >
+            StarOfService.com, France
+          </a>
           <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
             (2014—present)
           </small>
@@ -98,8 +117,13 @@ export default function CV() {
           </li>
         </ul>
 
-        <h4 className="flex justify-between text-2xl mb-1">
-          Fireworks LLC
+        <h4 className="flex justify-between text-2xl mb-1" id="fireworksllc">
+          <a
+            className="text-black transition-colors hover:text-primary-500"
+            href="#fireworksllc"
+          >
+            Fireworks LLC
+          </a>
           <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
             (2013—2014)
           </small>
@@ -128,8 +152,13 @@ export default function CV() {
           </li>
         </ul>
 
-        <h4 className="flex justify-between text-2xl mb-1">
-          Tata Consultancy Services
+        <h4 className="flex justify-between text-2xl mb-1" id="tcs">
+          <a
+            className="text-black transition-colors hover:text-primary-500"
+            href="#tcs"
+          >
+            Tata Consultancy Services
+          </a>
           <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
             (2012—2013)
           </small>
@@ -154,8 +183,13 @@ export default function CV() {
           </li>
         </ul>
 
-        <h4 className="flex justify-between text-2xl mb-1">
-          techMavins
+        <h4 className="flex justify-between text-2xl mb-1" id="techMavins">
+          <a
+            className="text-black transition-colors hover:text-primary-500"
+            href="#techMavins"
+          >
+            techMavins
+          </a>
           <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
             (2009—2011)
           </small>
@@ -177,7 +211,14 @@ export default function CV() {
           </li>
         </ul>
 
-        <h3>Education</h3>
+        <h3 id="education">
+          <a
+            className="text-black transition-colors hover:text-primary-500"
+            href="#education"
+          >
+            Education
+          </a>
+        </h3>
         <h4 className="flex justify-between text-2xl mb-1">
           Bachelors of Computer Engineering
           <small className="font-normal text-xs text-gray-500 keep-all inline-block self-start mt-3">
@@ -194,7 +235,14 @@ export default function CV() {
         </h4>
         <em>Technical Education Board.</em>
 
-        <h3>Hobbies</h3>
+        <h3 id="hobbies">
+          <a
+            className="text-black transition-colors hover:text-primary-500"
+            href="#hobbies"
+          >
+            Hobbies
+          </a>
+        </h3>
         <ul>
           <li>
             Building electronic projects on a perfboard while{' '}
@@ -211,7 +259,14 @@ export default function CV() {
           </li>
         </ul>
 
-        <h3>My Values</h3>
+        <h3 id="values">
+          <a
+            className="text-black transition-colors hover:text-primary-500"
+            href="#values"
+          >
+            My Values
+          </a>
+        </h3>
         <ul>
           <li title="From ‘12 Rules for Life’ by Jordan Peterson">
             Tell the truth—or, at least, don’t lie.

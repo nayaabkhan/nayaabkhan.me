@@ -12,7 +12,7 @@
     font-size: clamp(1em, 0.333vw + 0.9em, 1.5em);
   }
 
-  a {
+  a:not([class]) {
     @apply text-primary-500;
   }
 
