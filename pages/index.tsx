@@ -11,13 +11,14 @@ export default function Home() {
       <Head>
         <title>Nayaab Khan | Designer | Developer</title>
       </Head>
-      <header className="flex flex-col items-center">
+      <header className="flex flex-col items-center text-center">
         <div className="relative rounded-full overflow-hidden w-7 h-7 shadow-md">
           <Image src="/me.jpeg" layout="fill" />
         </div>
-        <h1 className="mb-6 text-shadow text-6xl font-bold text-center">
-          Hi, I’m Nayaab!
-        </h1>
+        <h1>Nayaab Khan</h1>
+        <h2 className="font-normal text-xl text-gray-500 mt-0">
+          A Delectable Blend of Designer &amp; Developer
+        </h2>
       </header>
 
       <main>
