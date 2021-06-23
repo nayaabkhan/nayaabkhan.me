@@ -14,7 +14,7 @@ function NavLink(props: React.HTMLProps<HTMLAnchorElement>) {
 
   return (
     <Link href={href}>
-      <a className={`text-xs flex ${linkColor} ${className}`} {...deferred} />
+      <a className={`text-sm flex ${linkColor} ${className}`} {...deferred} />
     </Link>
   )
 }
