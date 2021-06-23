@@ -28,8 +28,23 @@ function HeaderSection(props: React.HTMLProps<HTMLDivElement>) {
 }
 
 export default function Header(props: React.HTMLProps<HTMLElement>) {
+  const headerRef = React.useRef(null)
+
+  React.useEffect(() => {
+    window.addEventListener('scroll', () => {
+      const scroll = window.scrollY
+      const headerElement = headerRef.current as HTMLElement
+
+      if (scroll >= 20) {
+        headerElement.classList.add('shadow')
+      } else {
+        headerElement.classList.remove('shadow')
+      }
+    })
+  }, [])
+
   return (
-    <header className="header">
+    <header ref={headerRef} className="header">
       <Container className="flex items-center py-4">
         <HeaderSection>
           <NavLink href="/" className="block">
