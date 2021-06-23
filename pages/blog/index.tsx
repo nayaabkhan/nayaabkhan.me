@@ -35,8 +35,8 @@ export default function BlogListing({ posts }) {
                   <span className="font-bold text-lg">
                     {post.frontmatter.title}
                   </span>
-                  <p className="text-gray-600 text-sm mt-3">{post.excerpt}…</p>
-                  <span className="text-sm px-3 py-2 -mx-3 transition duration-300 ease-in-out bg-transparent hover:bg-primary-600 hover:text-white self-start rounded-md">
+                  <p className="text-gray-500 mt-3">{post.excerpt}…</p>
+                  <span className="px-3 py-2 -mx-3 transition duration-300 ease-in-out bg-transparent hover:bg-primary-600 hover:text-white self-start rounded-md">
                     Read more →
                   </span>
                 </div>
