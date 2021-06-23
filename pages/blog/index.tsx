@@ -19,29 +19,31 @@ export default function BlogListing({ posts }) {
         description="The latest posts on design and code."
       />
 
-      <ul>
+      <ul className="divide-y divide-gray-200">
         {posts.map((post) => (
-          <li key={post.slug} className="mb-2">
-            <Link as={`/blog/${post.slug}`} href={`/blog/[slug]`}>
-              <a className="flex items-start p-4 -mx-4 rounded-lg transition duration-300 ease-in-out hover:bg-gray-100">
-                <img
-                  alt="Illustration of the blog post"
-                  src={`/posts/${post.slug}.png`}
-                  width="64"
-                  height="64"
-                  className="mr-4"
-                />
-                <div className="flex flex-col">
-                  <span className="font-bold text-lg">
-                    {post.frontmatter.title}
-                  </span>
-                  <p className="text-gray-500 mt-3">{post.excerpt}…</p>
-                  <span className="px-3 py-2 -mx-3 transition duration-300 ease-in-out bg-transparent hover:bg-primary-600 hover:text-white self-start rounded-md">
-                    Read more →
-                  </span>
-                </div>
-              </a>
-            </Link>
+          <li key={post.slug}>
+            <article>
+              <Link as={`/blog/${post.slug}`} href={`/blog/[slug]`}>
+                <a className="flex items-baseline py-5">
+                  <div className="flex-shrink-0 pr-5 text-sm font-medium text-gray-500">
+                    <time
+                      dateTime={new Date(post.frontmatter.date).toISOString()}
+                    >
+                      {post.frontmatter.date}
+                    </time>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-bold text-lg">
+                      {post.frontmatter.title}
+                    </span>
+                    <p className="text-gray-500 mt-3">{post.excerpt}…</p>
+                    <span className="px-3 py-2 -mx-3 transition duration-300 ease-in-out bg-transparent text-primary-500 hover:bg-primary-600 hover:text-white self-start rounded-md">
+                      Read more →
+                    </span>
+                  </div>
+                </a>
+              </Link>
+            </article>
           </li>
         ))}
       </ul>
