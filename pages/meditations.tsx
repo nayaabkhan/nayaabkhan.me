@@ -7,6 +7,7 @@ import matter from 'gray-matter'
 import smartypants from '@silvenon/remark-smartypants'
 import { getMeditationFilePaths } from '../utils/meditations'
 import Container from '../src/components/Container'
+import PageHeading from '../src/components/PageHeading'
 
 export default function Meditations({ meditations }) {
   return (
@@ -16,11 +17,15 @@ export default function Meditations({ meditations }) {
         <link
           href="https://fonts.googleapis.com/css?family=La+Belle+Aurore&display=swap"
           rel="stylesheet"
-         />
+        />
       </Head>
 
       <Container className="my-6">
-        <h1 className="mb-5">Meditations</h1>
+        <PageHeading
+          title="Meditations"
+          description="Some philosophical scribbles."
+        />
+
         <ul className="font-script text-primary-600 text-xl">
           {meditations
             .sort((a, b) => {

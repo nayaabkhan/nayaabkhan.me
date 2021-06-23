@@ -5,6 +5,7 @@ import Link from 'next/link'
 import matter from 'gray-matter'
 import { getPostFilePaths } from '../../utils/posts'
 import Container from '../../src/components/Container'
+import PageHeading from '../../src/components/PageHeading'
 
 export default function BlogListing({ posts }) {
   return (
@@ -12,7 +13,12 @@ export default function BlogListing({ posts }) {
       <Head>
         <title>Blog | Nayaab Khan</title>
       </Head>
-      <h1 className="mb-5">Articles</h1>
+
+      <PageHeading
+        title="Latest"
+        description="The latest posts on design and code."
+      />
+
       <ul>
         {posts.map((post) => (
           <li key={post.slug} className="mb-2">

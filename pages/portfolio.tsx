@@ -2,6 +2,7 @@ import * as path from 'path'
 import Head from 'next/head'
 import ColorThief from 'colorthief'
 import Container from '../src/components/Container'
+import PageHeading from '../src/components/PageHeading'
 import { getPortfolioFilePaths } from '../utils/portfolio'
 
 export default function Portfolio({ portfolioImages }) {
@@ -10,7 +11,12 @@ export default function Portfolio({ portfolioImages }) {
       <Head>
         <title>Portfolio | Nayaab Khan</title>
       </Head>
-      <h1 className="mb-5">Portfolio</h1>
+
+      <PageHeading
+        title="Portfolio"
+        description="Some of my select work and a peek at my process."
+      />
+
       <ul className="grid grid-cols-repeat-auto-fill gap-4 ">
         {portfolioImages.map((image, i) => (
           <li
