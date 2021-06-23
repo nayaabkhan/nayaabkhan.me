@@ -9,7 +9,7 @@ import PageHeading from '../../src/components/PageHeading'
 
 export default function BlogListing({ posts }) {
   return (
-    <Container className="my-6">
+    <Container className="my-4 divide-y divide-gray-200">
       <Head>
         <title>Blog | Nayaab Khan</title>
       </Head>

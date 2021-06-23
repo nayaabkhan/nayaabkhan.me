@@ -7,7 +7,7 @@ import { getPortfolioFilePaths } from '../utils/portfolio'
 
 export default function Portfolio({ portfolioImages }) {
   return (
-    <Container className="my-6">
+    <Container className="my-4 divide-y divide-gray-200">
       <Head>
         <title>Portfolio | Nayaab Khan</title>
       </Head>
@@ -17,7 +17,7 @@ export default function Portfolio({ portfolioImages }) {
         description="Some of my select work and a peek at my process."
       />
 
-      <ul className="grid grid-cols-repeat-auto-fill gap-4 ">
+      <ul className="py-5 grid grid-cols-repeat-auto-fill gap-4">
         {portfolioImages.map((image, i) => (
           <li
             key={i}

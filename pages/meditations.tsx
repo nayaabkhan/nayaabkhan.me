@@ -20,7 +20,7 @@ export default function Meditations({ meditations }) {
         />
       </Head>
 
-      <Container className="my-6">
+      <Container className="my-4">
         <PageHeading
           title="Meditations"
           description="Some philosophical scribbles."

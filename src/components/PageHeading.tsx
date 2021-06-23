@@ -5,9 +5,9 @@ interface PageHeadingProps {
 
 export default function PageHeading({ title, description }: PageHeadingProps) {
   return (
-    <div>
-      <h1>{title}</h1>
-      <p className="mb-5 text-gray-500">{description}</p>
+    <div className="py-5">
+      <h1 className="my-0">{title}</h1>
+      <p className="my-0 text-gray-500">{description}</p>
     </div>
   )
 }
