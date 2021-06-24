@@ -50,7 +50,7 @@ module.exports = {
     },
 
     fontFamily: {
-      sans: ['Satoshi', '-apple-system', 'Roboto', 'Fira Sans', 'sans-serif'],
+      sans: ['Inter', '-apple-system', 'Roboto', 'Fira Sans', 'sans-serif'],
       em: ['Kalam', 'cursive'],
       script: ['"La Belle Aurore"', 'cursive'],
       mono: ['"DM Mono"', 'monospace'],

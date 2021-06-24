@@ -17,7 +17,7 @@
   }
 
   :is(h1, h2, h3, h4, h5, h6) {
-    @apply font-bold mt-5 mb-3 tracking-tight;
+    @apply font-extrabold mt-5 mb-3 tracking-tight;
     line-height: 1;
   }
 

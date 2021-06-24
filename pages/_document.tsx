@@ -20,11 +20,15 @@ class MyDocument extends Document {
           <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
           <link rel="alternate icon" href="/favicon.ico" />
 
-          <link rel="preconnect" href="https://api.fontshare.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossOrigin="true"
+          />
 
           <link
-            href="https://api.fontshare.com/css?f[]=satoshi@500,900&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap"
             rel="stylesheet"
           />
 
