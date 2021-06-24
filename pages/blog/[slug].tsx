@@ -16,16 +16,10 @@ export default function BlogPost({ frontmatter, post }) {
       <Head>
         <title>{frontmatter.title} | Nayaab Khan</title>
       </Head>
-      <header className="flex flex-col items-start my-6 mx-0 text-center">
+      <header className="flex flex-col items-start my-5 mx-0 text-center">
         <Container>
-          <a
-            href="#"
-            className="inline-block uppercase bg-primary-500 text-xs px-3 py-0 text-white rounded-full shadow-hard font-bold"
-          >
-            {frontmatter.hashtags[0]}
-          </a>
-          <h1 className="text-4xl mt-5 mb-4">{frontmatter.title}</h1>
-          <small className="text-xs tracking-widest uppercase">
+          <h1 className="text-5xl mt-5 mb-4">{frontmatter.title}</h1>
+          <small className="text-xs text-gray-500 tracking-widest uppercase">
             {frontmatter.date}
           </small>
         </Container>
