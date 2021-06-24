@@ -24,8 +24,8 @@ export default function BlogListing({ posts }) {
           <li key={post.slug}>
             <article>
               <Link as={`/blog/${post.slug}`} href={`/blog/[slug]`}>
-                <a className="flex items-baseline py-5">
-                  <div className="flex-shrink-0 pr-5 text-sm font-medium text-gray-500">
+                <a className="flex flex-wrap md:flex-nowrap gap-5 items-baseline py-5">
+                  <div className="flex-shrink-0 text-sm font-medium text-gray-500">
                     <time
                       dateTime={new Date(post.frontmatter.date).toISOString()}
                     >
