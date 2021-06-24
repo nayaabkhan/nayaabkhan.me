@@ -7,12 +7,11 @@ import matter from 'gray-matter'
 import smartypants from '@silvenon/remark-smartypants'
 import Container from '../../src/components/Container'
 import { getPostFilePaths } from '../../utils/posts'
-import HR from '../../src/components/HR'
 
 export default function BlogPost({ frontmatter, post }) {
   const content = hydrate(post)
   return (
-    <article className="flex flex-col post">
+    <article className="flex flex-col post divide-y divide-gray-200">
       <Head>
         <title>{frontmatter.title} | Nayaab Khan</title>
       </Head>
@@ -23,7 +22,6 @@ export default function BlogPost({ frontmatter, post }) {
             {frontmatter.date}
           </small>
         </Container>
-        <HR className="mt-4" />
       </header>
       <main>
         <Container>{content}</Container>

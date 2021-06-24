@@ -3,9 +3,8 @@ import HR from './HR'
 
 export default function Footer() {
   return (
-    <footer className="mt-auto">
-      <HR className="mt-5" />
-      <Container className="my-5">
+    <footer className="mt-auto py-5">
+      <Container>
         <div className="flex flex-col items-center">
           <strong className="font-em text-accent-500 tracking-tight">
             Have a nice day!
