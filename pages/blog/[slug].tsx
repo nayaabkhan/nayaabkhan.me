@@ -11,22 +11,24 @@ import { getPostFilePaths } from '../../utils/posts'
 export default function BlogPost({ frontmatter, post }) {
   const content = hydrate(post)
   return (
-    <article className="flex flex-col post divide-y divide-gray-200">
+    <>
       <Head>
         <title>{frontmatter.title} | Nayaab Khan</title>
       </Head>
-      <header className="flex flex-col items-start my-5 mx-0 text-center">
-        <Container>
-          <h1 className="text-5xl mt-5 mb-4">{frontmatter.title}</h1>
-          <small className="text-xs text-gray-500 tracking-widest uppercase">
-            {frontmatter.date}
-          </small>
-        </Container>
-      </header>
-      <main>
-        <Container>{content}</Container>
-      </main>
-    </article>
+
+      <Container>
+        <article className="flex flex-col post divide-y divide-gray-200">
+          <header className="flex flex-col items-center my-5 mx-0 text-center">
+            <h1 className="text-5xl mt-5 mb-4">{frontmatter.title}</h1>
+            <small className="text-xs text-gray-500 tracking-widest uppercase">
+              {frontmatter.date}
+            </small>
+          </header>
+
+          <main className="py-4">{content}</main>
+        </article>
+      </Container>
+    </>
   )
 }
 
