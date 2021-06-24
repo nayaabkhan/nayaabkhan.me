@@ -94,7 +94,7 @@
 
   .container {
     @apply mx-auto px-4;
-    width: clamp(320px, 95vw, 60ch);
+    width: clamp(320px, 95vw, 65ch);
   }
 
   .keep-all {
