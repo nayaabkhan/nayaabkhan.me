@@ -1,5 +1,4 @@
 import Container from './Container'
-import HR from './HR'
 
 export default function Footer() {
   return (
