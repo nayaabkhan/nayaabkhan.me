@@ -4,7 +4,11 @@ module.exports = {
   mode: 'jit',
   purge: {
     layers: [],
-    content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}'],
+    content: [
+      './pages/**/*.{js,ts,jsx,tsx}',
+      './src/**/*.{js,ts,jsx,tsx}',
+      '**/*.mdx',
+    ],
   },
   darkMode: false, // or 'media' or 'class'
 
@@ -51,18 +55,10 @@ module.exports = {
 
     fontFamily: {
       sans: ['Inter', '-apple-system', 'Roboto', 'Fira Sans', 'sans-serif'],
+      serif: ['Georgia', 'serif'],
       em: ['Kalam', 'cursive'],
       script: ['"La Belle Aurore"', 'cursive'],
       mono: ['"DM Mono"', 'monospace'],
-    },
-
-    extend: {
-      boxShadow: {
-        hard: '0 3px 2px -1px hsla(231, 64%, 50%, 30%)',
-      },
-      gridTemplateColumns: {
-        'repeat-auto-fill': 'repeat(auto-fill, minmax(220px, 1fr))',
-      },
     },
   },
 

@@ -71,11 +71,11 @@
     @apply my-4;
   }
 
-  .post li {
+  .post ul:not([class]) li {
     @apply relative pl-4 my-2;
   }
 
-  .post li::before {
+  .post ul:not([class]) li::before {
     content: '•';
     @apply absolute text-primary-200 left-1;
   }

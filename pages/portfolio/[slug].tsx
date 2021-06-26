@@ -5,11 +5,16 @@ import hydrate from 'next-mdx-remote/hydrate'
 import renderToString from 'next-mdx-remote/render-to-string'
 import matter from 'gray-matter'
 import smartypants from '@silvenon/remark-smartypants'
+import Zoom from 'react-medium-image-zoom'
+import 'react-medium-image-zoom/dist/styles.css'
+
 import Container from '../../src/components/Container'
 import { getPortfolioFilePaths } from '../../utils/portfolio'
 
 export default function PortfolioPost({ frontmatter, post }) {
-  const content = hydrate(post)
+  const content = hydrate(post, {
+    components: { Zoom },
+  })
   return (
     <>
       <Head>
@@ -55,6 +60,7 @@ export async function getStaticProps({ params }) {
   const { content, data: frontmatter } = matter(source)
 
   const post = await renderToString(content, {
+    components: { Zoom },
     mdxOptions: {
       remarkPlugins: [smartypants],
     },
