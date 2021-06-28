@@ -80,6 +80,21 @@
     @apply absolute text-primary-200 left-1;
   }
 
+  .post ol {
+    counter-reset: ordered-list;
+    @apply relative;
+  }
+
+  .post ol li {
+    counter-increment: ordered-list;
+    @apply pl-5;
+  }
+
+  .post ol li:before {
+    content: counter(ordered-list) '. ';
+    @apply absolute left-0 font-bold tabular-nums text-accent-500 pr-2;
+  }
+
   @keyframes blinker {
     50% {
       opacity: 0;
