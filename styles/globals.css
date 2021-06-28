@@ -80,19 +80,19 @@
     @apply absolute text-primary-200 left-1;
   }
 
-  .post ol {
+  .post ol:not([class]) {
     counter-reset: ordered-list;
     @apply relative;
   }
 
-  .post ol li {
+  .post ol:not([class]) li {
     counter-increment: ordered-list;
     @apply pl-5;
   }
 
-  .post ol li:before {
+  .post ol:not([class]) li:before {
     content: counter(ordered-list) '. ';
-    @apply absolute left-0 font-bold tabular-nums text-accent-500 pr-2;
+    @apply absolute left-0 font-bold tabular-nums text-primary-500 pr-2;
   }
 
   @keyframes blinker {
