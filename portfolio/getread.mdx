@@ -1,0 +1,28 @@
+---
+title: GetRead.in - Design and Development
+thumbnail: portfolio/getread/logo.png
+date: October 4, 2015
+---
+
+Back in 2015, we developed **getread.in** that solved one problem we personally
+faced: an easy way to subscribe to our favourite author and get their latest
+articles in our mailbox. In the beginning, our focus was solely on political
+authors.
+
+Most of the indian publications didn't have any way of doing this natively.
+Besides, their RSS feeds situation was abysmal – either they didn't have one or
+it was buried deep somewhere.
+
+## A bird's eye view
+
+What we wanted was to observe the most popular authors on the sites where they
+published and then deliver the post either immediately or in a digest, as
+preferred by our users.
+
+1. Our scrapper job periodically checks each author's page on a publication.
+2. When a new article gets posted, we scrap the title, date, an excerpt, etc.
+3. This would immediately show up on our site.
+4. A mailer job regularly sends out digest mails or immediate alerts for new
+   posts to our users.
+
+## Technicalities
