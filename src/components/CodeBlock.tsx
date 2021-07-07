@@ -107,16 +107,22 @@ const calculateLinesToHighlight = (meta) => {
   }
 }
 
-export default function CodeBlock({ children, className, metastring }) {
-  const language = className?.replace(/language-/, '')
+export default function CodeBlock({
+  children,
+  className,
+  metastring,
+  ...props
+}) {
+  // const language = className?.replace(/language-/, '')
+  const match = /language-(\w+)/.exec(className || '')
   const shouldHighlightLine = calculateLinesToHighlight(metastring)
 
-  return (
+  return match ? (
     <Highlight
       {...defaultProps}
       theme={theme}
       code={children.trim()}
-      language={language}
+      language={match[1]}
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre className={className} style={{ ...style, padding: '1rem 0' }}>
@@ -142,5 +148,9 @@ export default function CodeBlock({ children, className, metastring }) {
         </pre>
       )}
     </Highlight>
+  ) : (
+    <code className={className} {...props}>
+      {children}
+    </code>
   )
 }

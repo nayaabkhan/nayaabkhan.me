@@ -1,9 +1,9 @@
+import * as React from 'react'
 import * as fs from 'fs'
 import * as path from 'path'
 import Head from 'next/head'
-import hydrate from 'next-mdx-remote/hydrate'
-import renderToString from 'next-mdx-remote/render-to-string'
-import matter from 'gray-matter'
+import { bundleMDX } from 'mdx-bundler'
+import { getMDXComponent } from 'mdx-bundler/client'
 import smartypants from '@silvenon/remark-smartypants'
 import { getMeditationFilePaths } from '../utils/meditations'
 import Container from '../src/components/Container'
@@ -34,16 +34,24 @@ export default function Meditations({ meditations }) {
                 Number(new Date(a.frontmatter.date))
               )
             })
-            .map((meditation, index) => (
-              <li key={meditation.slug} className="mb-5">
-                <div className="flex flex-col">
-                  <small className="border-b border-accent-200 -mb-3">
-                    #{meditations.length - index} {meditation.frontmatter.date}
-                  </small>
-                  {hydrate(meditation.post)}
-                </div>
-              </li>
-            ))}
+            .map((meditation, index) => {
+              const Component = React.useMemo(
+                () => getMDXComponent(meditation.code),
+                [meditation.code]
+              )
+
+              return (
+                <li key={meditation.slug} className="mb-5">
+                  <div className="flex flex-col">
+                    <small className="border-b border-accent-200 -mb-3">
+                      #{meditations.length - index}{' '}
+                      {meditation.frontmatter.date}
+                    </small>
+                    <Component />
+                  </div>
+                </li>
+              )
+            })}
         </ul>
       </Container>
     </>
@@ -55,17 +63,16 @@ export async function getStaticProps() {
 
   const meditations = meditationFilePaths.map(async (filePath) => {
     const source = fs.readFileSync(path.join('meditations', filePath), 'utf-8')
-
-    const { content, data: frontmatter } = matter(source)
     const slug = path.basename(filePath, '.mdx')
 
-    const post = await renderToString(content, {
-      mdxOptions: {
-        remarkPlugins: [smartypants],
+    const result = await bundleMDX(source, {
+      xdmOptions(options) {
+        options.remarkPlugins = [...(options.remarkPlugins ?? []), smartypants]
+        return options
       },
     })
 
-    return { slug, frontmatter, post }
+    return { slug, ...result }
   })
 
   return { props: { meditations: await Promise.all(meditations) } }
