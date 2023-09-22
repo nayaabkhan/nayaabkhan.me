@@ -88,7 +88,7 @@ export default function Header(props: React.HTMLProps<HTMLElement>) {
               <NavLink
                 className="py-1 px-4 flex items-center gap-2"
                 target="_blank"
-                href="https://www.notion.so/nayaabkhan/Nayaab-Khan-99cf558285fc497fa6ba3bfb457999e5?pvs=4"
+                href="/cv"
               >
                 <span>CV</span>
                 <svg
