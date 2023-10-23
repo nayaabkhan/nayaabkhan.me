@@ -1,15 +1,22 @@
+import * as React from 'react'
 import * as fs from 'fs'
 import * as path from 'path'
 import Head from 'next/head'
-import hydrate from 'next-mdx-remote/hydrate'
-import renderToString from 'next-mdx-remote/render-to-string'
-import matter from 'gray-matter'
+import { bundleMDX } from 'mdx-bundler'
+import { getMDXComponent } from 'mdx-bundler/client'
 import smartypants from '@silvenon/remark-smartypants'
 import Container from '../../src/components/Container'
+import CodeBlock from '../../src/components/CodeBlock'
 import { getPostFilePaths } from '../../utils/posts'
 
-export default function BlogPost({ frontmatter, post }) {
-  const content = hydrate(post)
+const components = {
+  pre: (props) => <div {...props} />,
+  code: CodeBlock,
+}
+
+export default function BlogPost({ frontmatter, code }) {
+  const Component = React.useMemo(() => getMDXComponent(code), [code])
+
   return (
     <>
       <Head>
@@ -25,7 +32,9 @@ export default function BlogPost({ frontmatter, post }) {
             </small>
           </header>
 
-          <main className="py-4">{content}</main>
+          <main className="py-4">
+            <Component components={components} />
+          </main>
         </article>
       </Container>
     </>
@@ -48,13 +57,12 @@ export async function getStaticProps({ params }) {
     'utf-8'
   )
 
-  const { content, data: frontmatter } = matter(source)
-
-  const post = await renderToString(content, {
-    mdxOptions: {
-      remarkPlugins: [smartypants],
+  const result = await bundleMDX(source, {
+    xdmOptions(options) {
+      options.remarkPlugins = [...(options.remarkPlugins ?? []), smartypants]
+      return options
     },
   })
 
-  return { props: { frontmatter, post } }
+  return { props: { ...result } }
 }
